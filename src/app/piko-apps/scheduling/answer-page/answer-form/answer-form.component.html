@@ -1,0 +1,77 @@
+<div class="margined-element">
+  <mat-form-field>
+    <input matInput placeholder="表示名"
+        [value]="userName || ''"
+        (change)="userNameOnChange( $event.target.value )"
+        required>
+  </mat-form-field>
+</div>
+
+<table *ngIf="event"
+    class="data-table  data-table--shadow3px  data-table--vertical-line">
+  <thead>
+    <tr>
+      <th>日程</th>
+      <ng-container *ngFor="let symbol of event.symbols">
+        <th *ngIf="symbol.useThis">
+          <button mat-icon-button [value]="symbol.id"
+              [title]="symbol.description"
+              (click)="symbolHeaderSelected( symbol.id )">
+            <mat-icon aria-hidden="true" [title]="symbol.description">
+              {{symbol.iconName}}
+            </mat-icon>
+          </button>
+        </th>
+      </ng-container>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let datetime of event.selectedDatetimes">
+      <th>
+        {{utils.toYMD( datetime )}}
+        ({{utils.getDayStringEng( datetime )}})
+        {{utils.toHM( datetime )}}
+      </th>
+      <ng-container *ngFor="let symbol of event.symbols">
+        <td *ngIf="symbol.useThis">
+          <button mat-icon-button [value]="symbol.id"
+              [title]="symbol.description"
+              (click)="symbolSelected( datetime, symbol.id )">
+            <mat-icon aria-hidden="true"
+                class="symbol-toggle-button"
+                [class.selected]="symbol.id === dateToSymbolId[ datetime.valueOf() ]"
+                [title]="symbol.description">
+              {{symbol.iconName}}
+            </mat-icon>
+          </button>
+        </td>
+      </ng-container>
+    </tr>
+  </tbody>
+</table>
+
+<div class="margined-element">
+  <mat-form-field>
+    <textarea  matInput placeholder="コメント"
+        [value]="comment || ''"
+        (change)="commentOnChange( $event.target.value )" >
+    </textarea>
+  </mat-form-field>
+</div>
+
+<div class="margined-element">
+  <button class="margined-element" mat-raised-button
+      (click)="resetForm()">
+    リセット
+  </button>
+  <button class="margined-element" mat-raised-button color="primary"
+      [disabled]="!allDatesSelected || !userName"
+      (click)="submitAnswer()">
+    {{answerId ? '更新' : '登録' }}
+  </button>
+  <button class="margined-element" mat-raised-button color="warn"
+      *ngIf="!!answerId"
+      (click)="deleteAnswer()">
+    登録を削除
+  </button>
+</div>

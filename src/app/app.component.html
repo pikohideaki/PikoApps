@@ -1,0 +1,43 @@
+<mat-toolbar color='primary' class='header box-shadow'>
+  <a mat-icon-button routerLink='/'> <mat-icon>home</mat-icon> </a>
+
+  <!-- <div *ngIf="signedIn$ | async">
+    <a mat-icon-button [matMenuTriggerFor]="appMenu">
+      <mat-icon>menu</mat-icon>
+    </a>
+    <mat-menu #appMenu="matMenu" [overlapTrigger]="false">
+      <a mat-menu-item routerLink='/'>Home</a>
+    </mat-menu>
+  </div> -->
+
+  <span class="spacer"></span>
+  <!--
+
+  <span class="userName">{{ myName$ | async }}</span>
+
+  <ng-container *ngIf="(signedIn$ | async); then thenBlock; else elseBlock"></ng-container>
+  <ng-template #thenBlock>
+    <a mat-icon-button [matMenuTriggerFor]="userMenu"> <mat-icon>person</mat-icon> </a>
+    <mat-menu #userMenu="matMenu" [overlapTrigger]="false">
+      <a mat-menu-item routerLink='/user-admin'>アカウント</a>
+      <button mat-menu-item (click)="logout()">
+        <span>ログアウト</span>
+      </button>
+    </mat-menu>
+  </ng-template>
+  <ng-template #elseBlock>
+    <a mat-icon-button routerLink='/user-admin'> <mat-icon>person</mat-icon> </a>
+  </ng-template> -->
+
+  <a mat-button routerLink='/feedback'>
+    <mat-icon>feedback</mat-icon>フィードバック
+  </a>
+
+
+</mat-toolbar>
+
+
+<!--dummy-->
+<mat-toolbar> </mat-toolbar>
+
+<router-outlet></router-outlet>

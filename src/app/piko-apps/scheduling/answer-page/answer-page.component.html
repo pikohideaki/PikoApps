@@ -1,0 +1,56 @@
+<div class="body-with-padding">
+  <app-waiting-spinner [done]="!!event"></app-waiting-spinner>
+
+  <ng-container *ngIf="event">
+    <H2>
+      イベント名：{{event.title}}
+      <button mat-icon-button (click)="editEvent()" title="イベントを編集">
+        <mat-icon aria-hidden="true">edit</mat-icon>
+      </button>
+    </H2>
+    <p>ノート：{{event.notes}}</p>
+    <p>回答期限：
+      <span [class.answerDeadlineExpired]="answerDeadlineExpired">
+        {{utils.toYMD( event.answerDeadline )}}
+        <span *ngIf="answerDeadlineExpired">（回答の受付を終了しました。）</span>
+      </span>
+    </p>
+  </ng-container>
+
+  <app-spreadsheet
+    data-comment="結果一覧"
+    [event$]="event$"
+    [answerDeadlineExpired$]="answerDeadlineExpired$"
+    (answerIdChange)="answerIdOnChange( $event )" >
+  </app-spreadsheet>
+
+  <ng-container *ngIf="event">
+    <table class="margined-element" data-comment="記号の説明">
+      <tbody>
+        <ng-container *ngFor="let symbol of event.symbols">
+          <tr *ngIf="symbol.useThis">
+            <th><mat-icon>{{symbol.iconName}}</mat-icon></th>
+            <td>：</td>
+            <td>{{symbol.description}}</td>
+            <td class="align-right">（{{symbol.score}}点）</td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </ng-container>
+
+
+  <hr>
+
+  <div *ngIf="!answerDeadlineExpired && !!event"
+      class="margined-element answer-form"
+      data-comment="入力"
+      #answerForm>
+    <app-answer-form
+      [event$]="event$"
+      [eventId]="eventId"
+      [answerId$]="answerId$"
+      (answerIdChange)="answerIdOnChange( $event )" >
+    </app-answer-form>
+  </div>
+</div>
