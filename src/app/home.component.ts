@@ -27,7 +27,9 @@ export class HomeComponent implements OnInit {
     private myUserInfo: MyUserInfoService
   ) {
     this.apps$ = this.myUserInfo.signedIn$.map( signedIn => [
-        { routerLink: '/scheduling' , inService: true, title: 'Scheduling', subtitle: '日程調整', },
+        { routerLink: '/scheduling',       inService: true, title: 'Scheduling',       subtitle: '日程調整' },
+        { routerLink: '/toybox',           inService: true, title: 'Toy Box',          subtitle: 'おもちゃ' },
+        { routerLink: '/tools-collection', inService: true, title: 'Tools Collection', subtitle: 'ツール集' },
       ] );
   }
 

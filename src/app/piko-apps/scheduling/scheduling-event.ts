@@ -24,7 +24,7 @@ export class SchedulingEvent {
     if ( !initObj ) return;
     this.title = ( initObj.title || '' );
     this.notes = ( initObj.notes || '' );
-    this.selectedDatetimes = initObj.selectedDatetimesTimeStamps.map( e => new Date( e || 0 ) );
+    this.selectedDatetimes = (initObj.selectedDatetimesTimeStamps || []).map( e => new Date( e || 0 ) );
     this.answerDeadline = new Date( initObj.answerDeadlineTimeStamp || 0 );
     this.symbols = ( initObj.symbols || [] );
     this.answers = ( entries( initObj.answers ).map( e => new Answer( e.key, e.value ) ) || [] );
@@ -60,7 +60,7 @@ export class Answer {
     if ( !initObj ) return;
     this.userName = ( initObj.userName || '' );
     this.comment  = ( initObj.comment  || '' );
-    this.selection = ( initObj.selection.map( e => ({
+    this.selection = ( (initObj.selection || []).map( e => ({
                           date     : new Date( e.dateValue ),
                           symbolID : e.symbolID,
                         })) || [] );

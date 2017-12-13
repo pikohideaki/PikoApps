@@ -17,6 +17,8 @@ import { SchedulingEvent, Answer, MySymbol } from '../../scheduling-event';
 export class SpreadsheetComponent implements OnInit, OnDestroy {
   private alive = true;
 
+  flipTableState = true;
+
   @Input() private event$: Observable<SchedulingEvent>;
   event: SchedulingEvent;  /* for template */
 
@@ -99,13 +101,19 @@ export class SpreadsheetComponent implements OnInit, OnDestroy {
 
 
 
+  flipTable() {
+    this.flipTableState = !this.flipTableState;
+  }
 
   /* for print */
   getAverageScore( event: SchedulingEvent, date: Date ) {
-    const symbolIDs
-      = event.answers.map( ans =>
-          ans.selection.find( e => e.date.valueOf() === date.valueOf() ).symbolID );
-    const scores = symbolIDs.map( id =>
+    const symbolIdsOfDate
+      = event.answers
+          .map( ans => ans.selection )
+          .map( selections => selections.find( e => e.date.valueOf() === date.valueOf() ) )
+          .filter( e => e !== undefined )
+          .map( e => e.symbolID );
+    const scores = symbolIdsOfDate.map( id =>
         (event.symbols.find( e => e.id === id ) || new MySymbol() ).score );
     return this.utils.average( scores );
   }

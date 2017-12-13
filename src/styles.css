@@ -6,6 +6,9 @@
   font-family: "Helvetica","Arial",sans-serif;
   box-sizing: border-box;
 }
+/* code {
+  font-family: Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+} */
 
 a {
   text-decoration: none;
