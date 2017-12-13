@@ -4,17 +4,18 @@ import { UtilitiesService } from '../../../my-own-library/utilities.service';
 import { submatch } from '../../../my-own-library/utilities';
 
 
-type Variable = string;
-
+type Variable = 'a'|'b'|'c'|'d'|'e'|
+                'f'|'g'|'h'|'i'|'j'|
+                'k'|'l'|'m'|'n'|'o'|
+                'p'|'q'|'r'|'s'|'t'|
+                'u'|'v'|'w'|'x'|'y'|'z';
 
 @Injectable()
 export class LambdaEvaluatorService {
 
   MAX_STEPS = 100;  // reduction再帰の回数上限
-  ALPHABETS
-    = [].concat(
-          this.utils.getAlphabets('lower'),
-          this.utils.getAlphabets('upper') );
+  ALPHABETS = <Variable[]>( this.utils.getAlphabets('lower') );
+
 
   constructor(
     private utils: UtilitiesService
@@ -92,7 +93,7 @@ export class LambdaEvaluatorService {
 
 
 
-  getFreeVariables( term ): string[] {
+  getFreeVariables( term ): Variable[] {
     if ( this.isVariable( term ) ) return [term];
     if ( this.isAbstraction( term ) ) {
       return this.getFreeVariables( term[2] ).filter( ch => ch !== term[1] );
@@ -103,6 +104,43 @@ export class LambdaEvaluatorService {
           this.getFreeVariables( term[1] ) );
     }
     return [];
+  }
+
+
+
+  /**
+   * @description
+   * If {@param term} != (M N) then {@param term}.
+   * Otherwise:
+   *   if {@param term} = (λx. M)N then M[x := N].
+   *   else proceed beta-reduction for M or N of (M N).
+   */
+  betaReduction1step( term ) {
+    if ( !this.isApplication(term) ) return term;
+    const left  = term[0];
+    const right = term[1];
+    console.log(term, left, right);
+    if ( this.isAbstraction(left) ) {
+      const arg     = left[1];
+      const subTerm = left[2];
+      console.log( 'result', this.substitute( right, arg, subTerm ) );
+      return this.substitute( right, arg, subTerm );
+    } else {
+      const leftAfter1step = this.betaReduction1step( left );
+      if ( !this.isEqual( leftAfter1step, left ) ) {
+        return [ leftAfter1step, right ];
+      } else {
+        return [ left, this.betaReduction1step( right ) ];
+      }
+    }
+  }
+
+
+  pickUpAvailableVariable( freeVariables: Variable[] ): Variable {
+    const availableVariables
+      = this.ALPHABETS.filter( e => !freeVariables.includes(e) );
+    if ( availableVariables.length < 1 ) console.error('alphabets exhausted');
+    return availableVariables[0];  // pick up one available
   }
 
 
@@ -119,31 +157,6 @@ export class LambdaEvaluatorService {
     return ['lambda', to, sub( term[2] ) ];
   }
 
-
-  /**
-   * @description
-   * If {@param term} != (M N) then {@param term}.
-   * Otherwise:
-   *   if {@param term} = (λx. M)N then M[x := N].
-   *   else proceed beta-reduction for M or N of (M N).
-   */
-  betaReduction1step( term ) {
-    if ( !this.isApplication(term) ) return term;
-    const left  = term[0];
-    const right = term[1];
-    console.log(term, left, right);
-    if ( this.isAbstraction(left) ) {
-      console.log( 'result', this.substitute( right, left[1], left[2] ) );
-      return this.substitute( right, left[1], left[2] );
-    } else {
-      const leftAfter1step = this.betaReduction1step( left );
-      if ( !this.isEqual( leftAfter1step, left ) ) {
-        return [ leftAfter1step, right ];
-      } else {
-        return [ left, this.betaReduction1step( right ) ];
-      }
-    }
-  }
 
   /**
    * @desc substitute term2 for x in formula term1 in capture-avoiding manner.
@@ -175,12 +188,9 @@ export class LambdaEvaluatorService {
       if ( !freeVariables.includes( arg ) ) {
         return [ 'lambda', arg, this.substitute( to, from, subTerm ) ];
       } else {
-        const availableVariables
-          = this.ALPHABETS.filter( e => !freeVariables.includes(e) );
-        if ( availableVariables.length < 1 ) console.error('alphabets exhausted');
-        const v = availableVariables[0];  // pick up one available
-        // return this.substitute( to, v, this.alphaConversion( v, term ) );
+        const v = this.pickUpAvailableVariable( freeVariables );
         return this.alphaConversion( v, term );
+        // return this.substitute( to, v, this.alphaConversion( v, term ) );
       }
     }
     console.error(`Syntax error: "${term}" is not lambda term.`);
