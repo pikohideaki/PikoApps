@@ -24,16 +24,15 @@ export class LambdaEvaluatorService {
 
   evalSequence( term ) {
     if ( !term || !this.isLambdaTerm( term ) ) return [];
-    const seq = [];
     let curr = term;
     let prev = undefined;
 
-    curr = term;
+    const seq = [];
     seq.push( term );
 
     for ( let counter = this.MAX_STEPS; counter-- > 0; ) {
-      const next = this.betaReduction1step( curr );
-      if ( this.isEqual(next, curr) ) break;
+      const next = this.evaluate1step( curr );
+      if ( this.isEqual( next, curr ) ) break;
       seq.push( next );
       prev = curr;
       curr = next;
@@ -41,25 +40,32 @@ export class LambdaEvaluatorService {
     return seq;
   }
 
+
+  evaluate1step( term ) {
+    return this.betaReduction1step( term );
+  }
+
+
+
   treeToString( term ) {
-    if ( this.isVariable(term) ) return term;
-    if ( this.isApplication(term) ) {
-      return `(${this.treeToString(term[0])} ${this.treeToString(term[1])})`;
+    if ( this.isVariable( term ) ) return term;
+    if ( this.isApplication( term ) ) {
+      return `(${this.treeToString(term[0])} ${this.treeToString( term[1] )})`;
     }
-    if ( this.isAbstraction(term) ) {
-      return `(lambda ${term[1]}. ${this.treeToString(term[2])})`;
+    if ( this.isAbstraction( term ) ) {
+      return `(lambda ${term[1]}. ${this.treeToString( term[2] )})`;
     }
   }
 
 
   isEqual( term1, term2 ): boolean {
-    if ( this.isVariable(term1) && this.isVariable(term2) ) {
+    if ( this.isVariable( term1 ) && this.isVariable( term2 ) ) {
       return term1 === term2;
     }
-    if ( this.isAbstraction(term1) && this.isAbstraction(term2) ) {
+    if ( this.isAbstraction( term1 ) && this.isAbstraction( term2 ) ) {
       return ( term1[1] === term2[1] && this.isEqual( term1[2], term2[2] ) );
     }
-    if ( this.isApplication(term1) && this.isApplication(term2) ) {
+    if ( this.isApplication( term1 ) && this.isApplication( term2 ) ) {
       return ( this.isEqual( term1[0], term2[0] )
             && this.isEqual( term1[1], term2[1] ) );
     }
@@ -68,20 +74,19 @@ export class LambdaEvaluatorService {
 
 
   isVariable( term ) {  /* "x" -> true, ["lambda", "x", "x"] -> false */
-    if ( !term || term.length !== 1 ) return false;
-    if ( typeof term !== 'string' ) return false;
+    if ( !term || (typeof term !== 'string') || term.length !== 1 ) return false;
     return !!( term.match(/[a-z]/i) );
   }
 
   isAbstraction( term ) {
-    if ( !term || term.length !== 3 ) return false;
+    if ( !term || !Array.isArray( term ) || term.length !== 3 ) return false;
     return ( term[0] === 'lambda'
           && this.isVariable( term[1] )
           && this.isLambdaTerm( term[2] ) );
   }
 
   isApplication( term ) {
-    if ( !term || term.length !== 2 ) return false;
+    if ( !term || !Array.isArray( term ) || term.length !== 2 ) return false;
     return this.isLambdaTerm( term[0] ) && this.isLambdaTerm( term[1] );
   }
 
@@ -116,23 +121,29 @@ export class LambdaEvaluatorService {
    *   else proceed beta-reduction for M or N of (M N).
    */
   betaReduction1step( term ) {
-    if ( !this.isApplication(term) ) return term;
-    const left  = term[0];
-    const right = term[1];
-    console.log(term, left, right);
-    if ( this.isAbstraction(left) ) {
-      const arg     = left[1];
-      const subTerm = left[2];
-      console.log( 'result', this.substitute( right, arg, subTerm ) );
-      return this.substitute( right, arg, subTerm );
-    } else {
-      const leftAfter1step = this.betaReduction1step( left );
-      if ( !this.isEqual( leftAfter1step, left ) ) {
-        return [ leftAfter1step, right ];
+    // console.log( 'betaReduction1step', term );
+    if ( this.isVariable( term ) ) return term;
+    if ( this.isAbstraction( term ) ) {
+      return ['lambda', term[1], this.betaReduction1step( term[2] ) ];
+    }
+    if ( this.isApplication( term ) ) {
+      const left  = term[0];
+      const right = term[1];
+      if ( this.isAbstraction( left ) ) {
+        const arg  = left[1];
+        const body = left[2];
+        return this.substitute( right, arg, body );
       } else {
-        return [ left, this.betaReduction1step( right ) ];
+        const leftAfter1step = this.betaReduction1step( left );
+        if ( !this.isEqual( leftAfter1step, left ) ) {
+          return [ leftAfter1step, right ];
+        } else {
+          return [ left, this.betaReduction1step( right ) ];
+        }
       }
     }
+    console.error(`Syntax error: "${term}" is not lambda term.`);
+    return term;
   }
 
 
@@ -144,14 +155,19 @@ export class LambdaEvaluatorService {
   }
 
 
+  /**
+   * @desc (λx.M[x]) → (λy.M[y])
+   * @param to   "y" of "(λx.M[x]) → (λy.M[y])"
+   * @param term "(λx.M[x])" of "(λx.M[x]) → (λy.M[y])"
+   */
   alphaConversion( to: Variable, term ) {
-    console.log( 'alphaConversion', to, term );
+    // console.log( 'alphaConversion', to, term );
     if ( !this.isAbstraction( term ) ) return term;
-    const from = term[1];
+    const from = term[1];  // "x" of "(λx.M[x])"
     const sub = (t) => {
       if ( this.isVariable(t) )    return ( t === from ? to : t );
-      if ( this.isApplication(t) ) return [ sub(t[0]), sub(t[1]) ];
-      if ( this.isAbstraction(t) ) return ( t[1] === from ? t : ['lambda', t[1], sub(t[2])] );
+      if ( this.isApplication(t) ) return [ sub( t[0] ), sub( t[1] ) ];
+      if ( this.isAbstraction(t) ) return ( t[1] === from ? t : ['lambda', t[1], sub( t[2] )] );
       return t;  // dummy
     };
     return ['lambda', to, sub( term[2] ) ];
@@ -166,31 +182,31 @@ export class LambdaEvaluatorService {
    * (M1 M2)[x := N] = (M1[x := N]) (M2[x := N])
    * (λx.M)[x := N]  = λx.M
    * (λy.M)[x := N]  = λy.(M[x := N]), if x ≠ y, provided y ∉ FV(N)
-   * if y ∈ FV(N) then
+   * if y ∈ FV(N) then proceed α-conversion
    */
   substitute( to, from, term ) {
-    console.log( 'substitute', to, from, term );
-    if ( this.isVariable(term) ) {
+    // console.log( 'substitute', to, from, term );
+    if ( this.isVariable( term ) ) {
       return ( term === from ? to : term );
     }
-    if ( this.isApplication(term) ) {
+    if ( this.isApplication( term ) ) {
       return [
         this.substitute( to, from, term[0] ),
         this.substitute( to, from, term[1] ) ];
     }
-    if ( this.isAbstraction(term) ) {
-      const arg     = term[1];
-      const subTerm = term[2];
+    if ( this.isAbstraction( term ) ) {
+      const arg  = term[1];
+      const body = term[2];
 
       if ( arg === from ) return term;
 
-      const freeVariables = this.getFreeVariables(to);
+      const freeVariables = this.getFreeVariables( to );
       if ( !freeVariables.includes( arg ) ) {
-        return [ 'lambda', arg, this.substitute( to, from, subTerm ) ];
+        return [ 'lambda', arg, this.substitute( to, from, body ) ];
       } else {
         const v = this.pickUpAvailableVariable( freeVariables );
-        return this.alphaConversion( v, term );
-        // return this.substitute( to, v, this.alphaConversion( v, term ) );
+        const converted = this.alphaConversion( v, term );
+        return this.substitute( to, from, converted );
       }
     }
     console.error(`Syntax error: "${term}" is not lambda term.`);

@@ -2,7 +2,10 @@
   overflow: auto;
   resize: horizontal;
 } */
-.input-area,.output-area,.memo-area {
+.input-area,
+.output-area,
+.memo-area,
+.descriptions {
   width: 100%;
   padding: 20px;
 }

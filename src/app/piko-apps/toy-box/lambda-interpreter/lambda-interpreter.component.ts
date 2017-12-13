@@ -5,6 +5,7 @@ import { LambdaParserService    } from './lambda-parser.service';
 import { LambdaEvaluatorService } from './lambda-evaluator.service';
 
 
+
 @Component({
   providers: [ LambdaParserService, LambdaEvaluatorService ],
   selector: 'app-lambda-interpreter',
@@ -35,6 +36,8 @@ export class LambdaInterpreterComponent implements OnInit {
     = this.input$
         .map( input => this.parser.splitToTokens( input ) )
         .map( tokens => this.parser.isLambdaTerm( tokens ) );
+
+
 
 
   constructor(
