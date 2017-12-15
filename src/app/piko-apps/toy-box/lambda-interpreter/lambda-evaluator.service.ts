@@ -47,16 +47,6 @@ export class LambdaEvaluatorService {
 
 
 
-  treeToString( term ) {
-    if ( this.isVariable( term ) ) return term;
-    if ( this.isApplication( term ) ) {
-      return `(${this.treeToString(term[0])} ${this.treeToString( term[1] )})`;
-    }
-    if ( this.isAbstraction( term ) ) {
-      return `(lambda ${term[1]}. ${this.treeToString( term[2] )})`;
-    }
-  }
-
 
   isEqual( term1, term2 ): boolean {
     if ( this.isVariable( term1 ) && this.isVariable( term2 ) ) {
@@ -73,9 +63,15 @@ export class LambdaEvaluatorService {
   }
 
 
+  isAlphaEqual( term1, term2 ): boolean {
+    // ToDo
+    return this.isEqual( term1, term2 );
+  }
+
+
   isVariable( term ) {  /* "x" -> true, ["lambda", "x", "x"] -> false */
     if ( !term || (typeof term !== 'string') || term.length !== 1 ) return false;
-    return !!( term.match(/[a-z]/i) );
+    return !!( term.match(/[a-z]/) );
   }
 
   isAbstraction( term ) {

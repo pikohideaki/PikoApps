@@ -10,8 +10,38 @@ export class LambdaParserService {
   parse( input: string ): undefined|string|any[] {
     if ( input.length === 0 ) return undefined;
     const tokens = this.splitToTokens( input );
-    if ( !this.isLambdaTerm( tokens ) ) return undefined;
-    return this.getParseTree( tokens );
+    const converted = this.expandShortcuts( tokens );
+    if ( !this.isLambdaTerm( converted ) ) return undefined;
+    return this.getParseTree( converted );
+  }
+
+
+  expandShortcuts( tokens: string[] ): string[] {
+    const expanded = [];
+    tokens.forEach( token => {
+      if ( !isNaN( parseInt( token, 10 ) ) ) {
+        const num = parseInt( token, 10 );
+        /* 3 => (lambda s. (lambda z. (s(s(s z))))) */
+        const churchNumber = `(lambda s.(lambda z. ${'(s'.repeat(num)} z${')'.repeat(num)}))`;
+        expanded.push( ...this.splitToTokens( churchNumber ) );
+        return;
+      }
+      switch (token) {
+        case 'SUCC' :
+          const SUCC = '(lambda n.(lambda s.(lambda z.(s((n s)z)))))';
+          expanded.push( ...this.splitToTokens( SUCC ) );
+          return;
+        case 'PLUS' :
+        case '+' :
+          const PLUS = '(lambda m.(lambda n.(lambda s.(lambda z.((m s) ((n s)z))))))';
+          expanded.push( ...this.splitToTokens( PLUS ) );
+          return;
+        default:
+          expanded.push( token );
+          return;
+      }
+    });
+    return expanded;
   }
 
 
@@ -23,6 +53,9 @@ export class LambdaParserService {
         case '(':
         case ')':
         case '.':
+        case '+':
+        case '-':
+        case '*':
           spaceInserted += ' ' + char + ' ';
           break;
 
@@ -87,7 +120,7 @@ export class LambdaParserService {
   isVariable( char: string ): boolean {
     if ( !char ) return false;
     if ( typeof char !== 'string' ) return false;
-    return char.length === 1 && !!(char.match(/[a-z]/i));
+    return char.length === 1 && !!(char.match(/[a-z]/));
   }
 
   isLambdaTerm( tokens: string[] ): boolean {

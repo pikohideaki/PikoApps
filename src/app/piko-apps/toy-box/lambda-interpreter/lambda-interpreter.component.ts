@@ -3,11 +3,16 @@ import { Observable, BehaviorSubject } from 'rxjs/Rx';
 
 import { LambdaParserService    } from './lambda-parser.service';
 import { LambdaEvaluatorService } from './lambda-evaluator.service';
+import { LambdaPrintService     } from './lambda-print.service';
 
 
 
 @Component({
-  providers: [ LambdaParserService, LambdaEvaluatorService ],
+  providers: [
+      LambdaParserService,
+      LambdaEvaluatorService,
+      LambdaPrintService
+    ],
   selector: 'app-lambda-interpreter',
   templateUrl: './lambda-interpreter.component.html',
   styleUrls: [
@@ -23,12 +28,12 @@ export class LambdaInterpreterComponent implements OnInit {
   private parseTree$: Observable<undefined|string|any[]>
     = this.input$.map( input => this.parser.parse( input ) );
   parseTreeToStr$: Observable<string>
-    = this.parseTree$.map( tree => this.evaluator.treeToString(tree) );
+    = this.parseTree$.map( tree => this.print.termToString(tree) );
   private evalSequence$: Observable<any[]>
     = this.parseTree$.map( t => this.evaluator.evalSequence(t) );
 
   private evalSeqToStr$: Observable<string[]>
-    = this.evalSequence$.map( seq => seq.map( tree => this.evaluator.treeToString( tree ) ) );
+    = this.evalSequence$.map( seq => seq.map( tree => this.print.termToString( tree ) ) );
   output$: Observable<string>
     = this.evalSeqToStr$.map( seq => seq.map( (s, i) => `${i}.\t${s}` ).join('\n') );
 
@@ -43,6 +48,7 @@ export class LambdaInterpreterComponent implements OnInit {
   constructor(
     private parser:    LambdaParserService,
     private evaluator: LambdaEvaluatorService,
+    private print:     LambdaPrintService,
   ) { }
 
   ngOnInit() {
