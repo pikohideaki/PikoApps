@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs/Rx';
 
+import { LambdaMacroService     } from './lambda-macro.service';
 import { LambdaParserService    } from './lambda-parser.service';
 import { LambdaEvaluatorService } from './lambda-evaluator.service';
 import { LambdaPrintService     } from './lambda-print.service';
@@ -9,6 +10,7 @@ import { LambdaPrintService     } from './lambda-print.service';
 
 @Component({
   providers: [
+      LambdaMacroService,
       LambdaParserService,
       LambdaEvaluatorService,
       LambdaPrintService

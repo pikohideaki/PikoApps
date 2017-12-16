@@ -1,9 +1,13 @@
 import { Injectable } from '@angular/core';
 
+import { LambdaMacroService } from './lambda-macro.service';
+
 @Injectable()
 export class LambdaParserService {
 
-  constructor() { }
+  constructor(
+    private macro: LambdaMacroService
+  ) { }
 
 
 
@@ -22,19 +26,16 @@ export class LambdaParserService {
       if ( !isNaN( parseInt( token, 10 ) ) ) {
         const num = parseInt( token, 10 );
         /* 3 => (lambda s. (lambda z. (s(s(s z))))) */
-        const churchNumber = `(lambda s.(lambda z. ${'(s'.repeat(num)} z${')'.repeat(num)}))`;
-        expanded.push( ...this.splitToTokens( churchNumber ) );
+        expanded.push( ...this.splitToTokens( this.macro.number(num) ) );
         return;
       }
       switch (token) {
         case 'SUCC' :
-          const SUCC = '(lambda n.(lambda s.(lambda z.(s((n s)z)))))';
-          expanded.push( ...this.splitToTokens( SUCC ) );
+          expanded.push( ...this.splitToTokens( this.macro.succ() ) );
           return;
         case 'PLUS' :
         case '+' :
-          const PLUS = '(lambda m.(lambda n.(lambda s.(lambda z.((m s) ((n s)z))))))';
-          expanded.push( ...this.splitToTokens( PLUS ) );
+          expanded.push( ...this.splitToTokens( this.macro.plus() ) );
           return;
         default:
           expanded.push( token );

@@ -64,8 +64,21 @@ export class LambdaEvaluatorService {
 
 
   isAlphaEqual( term1, term2 ): boolean {
-    // ToDo
-    return this.isEqual( term1, term2 );
+    if ( this.isVariable( term1 ) && this.isVariable( term2 ) ) {
+      return term1 === term2;
+    }
+    if ( this.isAbstraction( term1 ) && this.isAbstraction( term2 ) ) {
+      if ( term1[1] === term2[1] ) return this.isAlphaEqual( term1[2], term2[2] );
+      else {
+        const term2converted = this.alphaConversion( term1[1], term2 );
+        return this.isAlphaEqual( term1[2], term2converted[2] );
+      }
+    }
+    if ( this.isApplication( term1 ) && this.isApplication( term2 ) ) {
+      return ( this.isAlphaEqual( term1[0], term2[0] )
+            && this.isAlphaEqual( term1[1], term2[1] ) );
+    }
+    return false;
   }
 
 
