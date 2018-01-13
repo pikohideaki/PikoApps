@@ -1,0 +1,44 @@
+<app-multiple-date-picker *ngIf="selectedDatetimes"
+  dayLabelLanguage="eng"
+  [filterFunction]="sinceToday"
+  [initialDateList$]="selectedDatesInit$"
+  (selectedDatesChange)="selectedDatesOnChange( $event )">
+</app-multiple-date-picker>
+<div class="margined-element">
+  <button mat-raised-button (click)="changeDatetimeAll()">時刻を一括変更</button>
+  （時刻規定値：{{utils.toHM( defaultDatetime )}}）
+</div>
+<table *ngIf="selectedDatetimesGrouped">
+  <tbody>
+    <ng-container  *ngFor="let dates of selectedDatetimesGrouped">
+      <tr *ngFor="let datetime of dates">
+        <td>{{utils.toYMD( datetime )}}</td>
+        <td>({{utils.getDayStringEng( datetime )}})</td>
+        <td>{{utils.toHM( datetime )}}</td>
+        <td>
+          <button mat-button class="mini-button" (click)="edit( datetime )"
+              aria-label="edit-datetime"
+              title="時刻を編集">
+            <mat-icon aria-hidden="true">edit</mat-icon>
+          </button>
+        </td>
+        <td>
+          <button mat-button class="mini-button" (click)="copy( datetime )"
+              aria-label="copy-datetime"
+              title="日程をコピー">
+            <mat-icon aria-hidden="true">content_copy</mat-icon>
+          </button>
+        </td>
+        <td>
+          <button mat-button class="mini-button"
+              (click)="remove( datetime )"
+              *ngIf="dates.length >= 2"
+              aria-label="delete-datetime"
+              title="日程を削除">
+            <mat-icon aria-hidden="true">clear</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </ng-container>
+  </tbody>
+</table>
