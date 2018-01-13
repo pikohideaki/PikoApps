@@ -1,53 +1,18 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
+
 import { AppComponent } from './app.component';
-
-import { AppRoutingModule } from './app-routing.module';
-
-/* angular material */
-import { MyOwnCustomMaterialModule } from './my-own-custom-material.module';
-
-/* ngx-pipes */
-import { NgPipesModule } from 'ngx-pipes';
-
-/* Feature Modules */
-import { ClipboardModule } from 'ngx-clipboard';
-
-/* my modules & components */
-import { MyOwnLibraryModule } from './my-own-library/my-own-library.module';
-
-/* angularfire2 */
-import { MyOwnAngularFireModule } from './firebase-mediator/my-own-angular-fire.module';
-
-import { HomeComponent } from './home.component';
-import { NotFoundPageComponent } from './not-found-page.component';
-import { FeedbackAdminComponent } from './feedback/feedback-admin.component';
-import { FeedbackComponent } from './feedback/feedback.component';
-
-import { PikoAppsModule } from './piko-apps/piko-apps.module';
 
 
 @NgModule({
   declarations: [
-    AppComponent,
-    HomeComponent,
-    NotFoundPageComponent,
-    FeedbackComponent,
-    FeedbackAdminComponent,
+    AppComponent
   ],
   imports: [
-    BrowserModule,
-    ClipboardModule,
-    NgPipesModule,
-    AppRoutingModule,
-    MyOwnCustomMaterialModule,
-    MyOwnLibraryModule,
-    MyOwnAngularFireModule,
-    PikoAppsModule,
+    BrowserModule
   ],
-  providers: [
-  ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
