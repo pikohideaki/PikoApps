@@ -1,7 +1,14 @@
 記号の定義
 <table class="margined-element">
   <tr *ngFor="let symbol of defaultSymbols">
-    <td> <mat-icon aria-hidden="true">{{symbol.iconName}}</mat-icon> </td>
+    <!-- <td> <mat-icon aria-hidden="true">{{symbol.iconName}}</mat-icon> </td> -->
+    <td>
+      <mat-checkbox
+          [checked]="symbol.useThis"
+          (change)="symbolChecked( symbol.id, $event.checked )">
+        <mat-icon aria-hidden="true">{{symbol.iconName}}</mat-icon>
+      </mat-checkbox>
+    </td>
     <td>：</td>
     <td>
       <mat-form-field>

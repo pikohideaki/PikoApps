@@ -18,6 +18,7 @@ import {
     MatToolbarModule,
     MatListModule,
     MatCardModule,
+    MatStepperModule,
     MatTabsModule,
     MatExpansionModule,
     MatButtonModule,
@@ -30,7 +31,6 @@ import {
     MatTooltipModule,
     MatSnackBarModule,
   } from '@angular/material';
-
 
 @NgModule({
   imports: [
@@ -50,6 +50,7 @@ import {
     MatToolbarModule,
     MatListModule,
     MatCardModule,
+    MatStepperModule,
     MatTabsModule,
     MatExpansionModule,
     MatButtonModule,
@@ -78,6 +79,7 @@ import {
     MatToolbarModule,
     MatListModule,
     MatCardModule,
+    MatStepperModule,
     MatTabsModule,
     MatExpansionModule,
     MatButtonModule,
