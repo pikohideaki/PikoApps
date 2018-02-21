@@ -1,5 +1,10 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs/Rx';
+
+import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import 'rxjs/add/observable/combineLatest';
+import 'rxjs/add/operator/takeWhile';
+import 'rxjs/add/operator/startWith';
 
 import { UtilitiesService } from '../utilities.service';
 
@@ -16,29 +21,28 @@ export class MultipleDatePickerComponent implements OnInit, OnDestroy {
   @Input() filterFunction = (e => true);
   @Input() dayLabelLanguage: 'eng'|'jp' = 'eng';
   @Input() initialDateList$: Observable<Date[]>;
+  @Output() selectedDatesChange = new EventEmitter<Date[]>();
 
   dayStrings: string[];
-  weeks: {date: Date, selected: boolean}[][] = [];
+  weeks$: Observable<{ date: Date, selected: boolean }[][]>;
 
   private currentYearSource  = new BehaviorSubject<number>( (new Date()).getFullYear() );
   private currentMonthSource = new BehaviorSubject<number>( (new Date()).getMonth() );
-  currentYear:  number;
-  currentMonth: number;
+  currentYear$:  Observable<number> = this.currentYearSource .asObservable();
+  currentMonth$: Observable<number> = this.currentMonthSource.asObservable();
 
   private selectedDateValuesSource = new BehaviorSubject<number[]>([]);
-  @Output() selectedDatesChange = new EventEmitter<Date[]>();
+  private selectedDateValues$ = this.selectedDateValuesSource.asObservable().startWith([]);
+
 
 
   constructor(
     private utils: UtilitiesService
   ) {
-    const currentYear$  = this.currentYearSource .asObservable();
-    const currentMonth$ = this.currentMonthSource.asObservable();
-    const weeks$: Observable<{date: Date, selected: boolean}[][]>
-      = Observable.combineLatest(
-        currentYear$,
-        currentMonth$,
-        this.selectedDateValuesSource.asObservable(),
+    this.weeks$ = Observable.combineLatest(
+        this.currentYear$,
+        this.currentMonth$,
+        this.selectedDateValues$,
         (year, month, selectedDates) => {
           const weeks: { date: Date, selected: boolean }[][] = [];
           this.utils.getAllDatesIn( year, month ).forEach( date => {
@@ -52,27 +56,11 @@ export class MultipleDatePickerComponent implements OnInit, OnDestroy {
             };
           });
           return weeks;
-        }
-    );
+        } );
 
-    const selectedDates$
-      = this.selectedDateValuesSource.asObservable()
-            .map( list => list.map( e => new Date(e) )
-                              .sort( (a, b) => this.utils.compareDates(a, b) ) );
-
-    currentYear$
-      .takeWhile( () => this.alive )
-      .subscribe( val => this.currentYear = val );
-
-    currentMonth$
-      .takeWhile( () => this.alive )
-      .subscribe( val => this.currentMonth = val );
-
-    weeks$
-      .takeWhile( () => this.alive )
-      .subscribe( val => this.weeks = val );
-
-    selectedDates$
+    this.selectedDateValues$
+      .map( list => list.map( e => new Date(e) )
+                        .sort( (a, b) => this.utils.compareDates(a, b) ) )
       .takeWhile( () => this.alive )
       .subscribe( val => this.selectedDatesChange.emit( val ) );
   }
@@ -88,14 +76,16 @@ export class MultipleDatePickerComponent implements OnInit, OnDestroy {
         break;
     }
 
-    this.initialDateList$.subscribe( initialDateList => {
-      const initialDateValuesUniq
-        = this.utils.uniq(
-            initialDateList
-              .map( e => this.utils.getMidnightOfDate(e) )
-              .map( e => e.valueOf() ) );
-      this.selectedDateValuesSource.next( initialDateValuesUniq );
-    });
+    if ( !!this.initialDateList$ ) {
+      this.initialDateList$.first().subscribe( initialDateList => {
+        const initialDateValuesUniq
+          = this.utils.uniq(
+              initialDateList
+                .map( e => this.utils.getMidnightOfDate(e) )
+                .map( e => e.valueOf() ) );
+        this.selectedDateValuesSource.next( initialDateValuesUniq );
+      });
+    }
   }
 
   ngOnDestroy() {
@@ -104,20 +94,20 @@ export class MultipleDatePickerComponent implements OnInit, OnDestroy {
 
 
   goToPreviousMonth() {
-    if ( this.currentMonthSource.value > 0 ) {
-      this.currentMonthSource.next( this.currentMonthSource.value - 1 );
+    if ( this.currentMonthSource.getValue() > 0 ) {
+      this.currentMonthSource.next( this.currentMonthSource.getValue() - 1 );
     } else {
       this.currentMonthSource.next( 11 );
-      this.currentYearSource.next( this.currentYearSource.value - 1 );
+      this.currentYearSource.next( this.currentYearSource.getValue() - 1 );
     }
   }
 
   goToNextMonth() {
-    if ( this.currentMonthSource.value < 11 ) {
-      this.currentMonthSource.next( this.currentMonthSource.value + 1 );
+    if ( this.currentMonthSource.getValue() < 11 ) {
+      this.currentMonthSource.next( this.currentMonthSource.getValue() + 1 );
     } else {
       this.currentMonthSource.next( 0 );
-      this.currentYearSource.next( this.currentYearSource.value + 1 );
+      this.currentYearSource.next( this.currentYearSource.getValue() + 1 );
     }
   }
 
@@ -139,7 +129,7 @@ export class MultipleDatePickerComponent implements OnInit, OnDestroy {
   dateOnSelectToggle( date: Date ) {
     if ( !date ) return;
     if ( !this.filterFunction( date ) ) return;
-    const current = this.selectedDateValuesSource.value;
+    const current = this.selectedDateValuesSource.getValue();
     if ( current.includes( date.valueOf() ) ) {
       this.utils.removeValue( current, date.valueOf() );
     } else {
@@ -149,20 +139,20 @@ export class MultipleDatePickerComponent implements OnInit, OnDestroy {
   }
 
   selectToggleDayColumn( dayIndex: number ) {
-    const current = this.selectedDateValuesSource.value;
-    const month = this.currentMonthSource.value;
-    const year  = this.currentYearSource.value;
+    const current = this.selectedDateValuesSource.getValue();
+    const month = this.currentMonthSource.getValue();
+    const year  = this.currentYearSource.getValue();
 
-    const datesInColumn
+    const datesOfDayColumn
       = this.utils.getAllDatesIn( year, month )
             .filter( date => date.getDay() === dayIndex )
             .filter( this.filterFunction );
     const datesInColumnAllSelected
-      = datesInColumn.every( e => current.includes( e.valueOf() ) );
+      = datesOfDayColumn.every( e => current.includes( e.valueOf() ) );
 
-    datesInColumn.forEach( date => this.utils.remove( current, date.valueOf() ) );
+    datesOfDayColumn.forEach( date => this.utils.remove( current, date.valueOf() ) );
     if ( !datesInColumnAllSelected ) {
-      datesInColumn.forEach( date => current.push( date.valueOf() ) );
+      datesOfDayColumn.forEach( date => current.push( date.valueOf() ) );
     }
     this.selectedDateValuesSource.next( current );
   }

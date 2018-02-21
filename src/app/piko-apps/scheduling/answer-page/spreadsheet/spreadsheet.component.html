@@ -6,6 +6,7 @@
       <thead>
         <tr>
           <th>日程 <button mat-button (click)="flipTable()">行列入れ替え</button></th>
+          <th>スコア</th>
           <ng-container *ngFor="let symbol of symbols">
             <th *ngIf="symbol.useThis">
               <mat-icon aria-hidden="true" [title]="symbol.description">
@@ -28,14 +29,15 @@
       </thead>
       <tbody>
         <tr *ngFor="let datetime of event.selectedDatetimes"
-            [class.dateIsSoso]="7 <= getAverageScore( event, datetime )
+            [class.dateIsGood]="7 <= getAverageScore( event, datetime )
                                   && getAverageScore( event, datetime ) < 10"
-            [class.dateIsOK]="getAverageScore( event, datetime ) === 10" >
+            [class.dateIsPerfect]="getAverageScore( event, datetime ) === 10" >
           <th>
             {{utils.toYMD( datetime )}}
-            ({{utils.getDayStringJp( datetime )}})
+            （{{utils.getDayStringJp( datetime )}}）
             {{utils.toHM( datetime )}}
           </th>
+          <th>{{getAverageScore( event, datetime )}}</th>
           <ng-container *ngFor="let symbol of symbols">
             <td *ngIf="symbol.useThis">
               {{spreadSheet[ datetime.valueOf() ][ symbol.id ]}}
@@ -75,7 +77,7 @@
           <th>日程 <button mat-button (click)="flipTable()">行列入れ替え</button></th>
           <th *ngFor="let datetime of event.selectedDatetimes">
             {{utils.toYMD( datetime )}}
-            ({{utils.getDayStringJp( datetime )}})<br>
+            （{{utils.getDayStringJp( datetime )}}）<br>
             {{utils.toHM( datetime )}}
           </th>
           <th>コメント</th>

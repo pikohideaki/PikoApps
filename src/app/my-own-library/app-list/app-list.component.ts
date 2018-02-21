@@ -1,5 +1,6 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { Observable } from 'rxjs/Rx';
+import { Component, OnInit, Input } from '@angular/core';
+
+import { Observable } from 'rxjs/Observable';
 
 
 @Component({
@@ -7,7 +8,7 @@ import { Observable } from 'rxjs/Rx';
   templateUrl: './app-list.component.html',
   styleUrls: ['./app-list.component.css']
 })
-export class AppListComponent implements OnInit, OnDestroy {
+export class AppListComponent implements OnInit {
   private alive = true;
 
   @Input() appName: string;
@@ -19,18 +20,8 @@ export class AppListComponent implements OnInit, OnDestroy {
           description?: string
         }[]>;
 
-  apps = [];
-
   constructor() { }
 
   ngOnInit() {
-    this.apps$
-      .takeWhile( () => this.alive )
-      .subscribe( val => this.apps = val );
   }
-
-  ngOnDestroy() {
-    this.alive = false;
-  }
-
 }

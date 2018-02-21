@@ -10,6 +10,24 @@ export function objectKeysAsNumber( object: Object ): number[] {
   return Object.keys( object ).map( e => Number(e) );
 }
 
+export function objectForEach(
+  object: Object,
+  f: (element: any, key?: string, object?: any) => any
+) {
+  Object.keys( object || {} ).forEach( key => f( object[key], key, object ) );
+}
+
+export function objectMap(
+  object: Object,
+  f: (element: any, key?: string, object?: any) => any
+) {
+  return Object.keys( object || {} ).map( key => f( object[key], key, object ) );
+}
+
+export function objectEntries( object: Object ) {
+  return objectMap( object, e => e );
+}
+
 export function submatch( target: string, key: string, ignoreCase: boolean = false ): boolean {
   if ( ignoreCase ) {
     return submatch( target.toUpperCase(), key.toUpperCase() );
@@ -61,4 +79,25 @@ export function isToday( date: Date ) {
 
   // call setHours to take the time out of the comparison
   return ( date.setHours(0, 0, 0, 0).valueOf() === todaysDate.setHours(0, 0, 0, 0).valueOf() );
+}
+
+
+
+
+
+export function seq0( length: number, step: number = 1 ): number[] {
+  return numberSequence( 0, length, step );
+}
+/**
+ * @description (0, 5) => [0,1,2,3,4], (2,12,3) => [2,5,8,11]
+ * @param start start number
+ * @param length array length
+ * @param step step number (default = 1)
+ * @return the number sequence array
+ */
+export function numSeq( start: number, length: number, step: number = 1 ): number[] {
+  return numberSequence( start, length, step );
+}
+export function numberSequence( start: number, length: number, step: number = 1 ): number[] {
+  return Array.from( new Array(length) ).map( (_, i) => i * step + start );
 }

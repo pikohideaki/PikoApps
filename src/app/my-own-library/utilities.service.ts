@@ -89,8 +89,16 @@ export class UtilitiesService {
     return Object.keys( object || {} ).map( key => f( object[key], key, object ) );
   }
 
+  objectEntries( object: Object ) {
+    return this.objectMap( object, e => e );
+  }
+
   copyObject( object: Object ) {
     return JSON.parse( JSON.stringify( object || {} ) );
+  }
+
+  compareByJsonString( obj1: Object, obj2: Object ) {
+    return JSON.stringify(obj1) === JSON.stringify(obj2);
   }
 
 
@@ -197,7 +205,21 @@ export class UtilitiesService {
 
 
   integerDivision( a: number, b: number ): number {
-    return Math.floor( a / b );
+    return Math.floor(Math.floor(a) / Math.floor(b));
+  }
+  divint( a: number, b: number ) {
+    return this.integerDivision( a, b );
+  }
+
+
+  /**
+   * @desc isInRange( target, begin, end ) === ( begin <= target && target < end )
+   */
+  isInRange( target: number, begin: number, end: number ) {
+    return ( begin <= target && target < end );
+  }
+  isInArrayRange( target: number, array: any[] ) {
+    return this.isInRange( target, 0, array.length );
   }
 
   /* float */
@@ -232,9 +254,7 @@ export class UtilitiesService {
   }
 
   permutation( n: number ): number[] {
-    const ar = new Array<number>(n);
-    for ( let i = 0; i < n; ++i ) { ar[i] = i; }
-    return this.getShuffled( ar );
+    return this.getShuffled( this.seq0(n) );
   }
 
 
@@ -281,6 +301,13 @@ export class UtilitiesService {
     return [].concat( ar1, ar2 );
   }
 
+  getReversed( array: any[] ) {
+    return this.copy( array ).reverse();
+  }
+
+  getSortedByKey( array: any[], key: string ) {
+    return this.copy( array ).sort( (x, y) => x[key] - y[key] );
+  }
 
   // let a = [ 1,2,3,[1,2,3],5 ];
   // let b = this.utils.makeShallowCopy(a);
@@ -407,6 +434,7 @@ export class UtilitiesService {
   numberSequence( start: number, length: number, step: number = 1 ): number[] {
     return Array.from( new Array(length) ).map( (_, i) => i * step + start );
   }
+
 
 
 

@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy,
-      Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { Observable, BehaviorSubject } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { UtilitiesService } from '../../../../my-own-library/utilities.service';
 
@@ -18,7 +18,7 @@ export class SelectDatesComponent implements OnInit, OnDestroy {
 
   defaultDatetime = new Date( ( new Date() ).setHours(19, 0, 0, 0) );  // 19:00 by default
 
-  @Input() selectedDatetimesInit$: Observable<Date[]> = Observable.from([]);
+  @Input() selectedDatetimesInit$: Observable<Date[]> = Observable.of([]);
   selectedDatesInit$: Observable<Date[]>;
 
   @Output() selectedDatetimesChange = new EventEmitter<Date[]>();

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { LambdaMacroService     } from './lambda-macro.service';
 import { LambdaParserService    } from './lambda-parser.service';

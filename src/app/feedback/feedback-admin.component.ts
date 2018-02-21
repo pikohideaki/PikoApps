@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Observable';
 
 import { CloudFirestoreMediatorService } from '../firebase-mediator/cloud-firestore-mediator.service';
 import { Feedback } from '../classes/feedback';
@@ -33,7 +33,7 @@ import { Feedback } from '../classes/feedback';
                 <span *ngSwitchDefault></span>
               </div>
             </td>
-            <td class="data-table--cell-alignLeft  content">
+            <td class="data-table--cell-alignLeft">
               {{fb.content}}
             </td>
           </tr>
@@ -41,10 +41,7 @@ import { Feedback } from '../classes/feedback';
       </table>
     </div>
   `,
-  styleUrls: [
-    '../my-own-library/data-table/data-table.component.css',
-    './feedback.component.css'
-  ]
+  styleUrls: [ '../my-own-library/data-table/data-table.component.css' ]
 })
 export class FeedbackAdminComponent implements OnInit, OnDestroy {
   private alive = true;

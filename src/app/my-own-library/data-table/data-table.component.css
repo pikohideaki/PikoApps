@@ -60,14 +60,14 @@ table.data-table--shadow3px {
 
 
 
-.data-table .clearSelectIcon {
+.data-table .clear-select-icon {
   font-size: 16px;
 }
 tbody button {
   font-weight: 700;
 }
 
-.pagerWrapper {
+.pager-wrapper {
   margin: 20px;
 }
 
@@ -93,4 +93,9 @@ tbody button {
 }
 .small-table td.small-table--narrow-cell {
   width: 60px;
+}
+
+.resetButton {
+  float: right;
+  margin: 5px;
 }

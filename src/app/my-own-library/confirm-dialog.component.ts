@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-confirm-dialog',
@@ -9,31 +9,26 @@ import { Component, OnInit, Input } from '@angular/core';
     </div>
 
     <!-- buttons -->
-    <div mat-dialog-actions class="actionButtons">
+    <div mat-dialog-actions class="action-buttons">
       <span class="margined-element">
-        <button mat-raised-button
-          mat-dialog-close="yes"
-          color='primary'>
+        <button mat-raised-button mat-dialog-close="yes" color='primary'>
           OK
         </button>
       </span>
       <span class="margined-element">
-        <button mat-raised-button
-          mat-dialog-close="no">
+        <button mat-raised-button mat-dialog-close="no">
           Cancel
         </button>
       </span>
     </div>
   `,
-  styles: [` .actionButtons { justify-content: center; } `]
+  styles: [` .action-buttons { justify-content: center; } `]
 })
 export class ConfirmDialogComponent implements OnInit {
-
-  @Input() message: string;
+  message: string;  // input
 
   constructor() {}
 
   ngOnInit() {
   }
-
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Observable';
 
 import { UtilitiesService } from '../../../../my-own-library/utilities.service';
 import { AlertDialogComponent } from '../../../../my-own-library/alert-dialog.component';

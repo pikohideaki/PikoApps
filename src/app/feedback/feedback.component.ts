@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Observable';
 import { MatDialog } from '@angular/material';
 
 import { CloudFirestoreMediatorService } from '../firebase-mediator/cloud-firestore-mediator.service';
@@ -9,10 +9,7 @@ import { Feedback } from '../classes/feedback';
 @Component({
   selector: 'app-feedback',
   templateUrl: './feedback.component.html',
-  styleUrls: [
-    '../my-own-library/data-table/data-table.component.css',
-    './feedback.component.css'
-  ]
+  styleUrls: [ '../my-own-library/data-table/data-table.component.css' ]
 })
 export class FeedbackComponent implements OnInit, OnDestroy {
   private alive = true;

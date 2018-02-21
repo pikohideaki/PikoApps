@@ -13,12 +13,10 @@ import { AppListComponent        } from './app-list/app-list.component';
 import { UtilitiesService        } from './utilities.service';
 
 // data table
-import { ResetButtonComponent  } from './data-table/reset-button.component';
 import { ItemsPerPageComponent } from './data-table/items-per-page.component';
 import { PagenationComponent   } from './data-table/pagenation/pagenation.component';
 import { DataTableComponent   } from './data-table/data-table.component';
 import { MultipleDatePickerComponent } from './multiple-date-picker/multiple-date-picker.component';
-
 
 
 @NgModule({
@@ -34,7 +32,6 @@ import { MultipleDatePickerComponent } from './multiple-date-picker/multiple-dat
     WaitingSpinnerComponent,
     AppListComponent,
     DataTableComponent,
-    ResetButtonComponent,
     ItemsPerPageComponent,
     PagenationComponent,
     MultipleDatePickerComponent,
@@ -46,14 +43,12 @@ import { MultipleDatePickerComponent } from './multiple-date-picker/multiple-dat
     WaitingSpinnerComponent,
     AppListComponent,
     DataTableComponent,
-    ResetButtonComponent,
     ItemsPerPageComponent,
     PagenationComponent,
     MultipleDatePickerComponent,
   ],
   providers: [
     UtilitiesService,
-    ResetButtonComponent,
   ],
   entryComponents: [
     MessageDialogComponent,
