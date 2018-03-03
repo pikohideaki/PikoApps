@@ -3,6 +3,7 @@ import { Observable } from 'rxjs/Observable';
 
 import { MyUserInfoService } from '../../firebase-mediator/my-user-info.service';
 
+
 @Component({
   selector: 'app-toy-box',
   template: `
