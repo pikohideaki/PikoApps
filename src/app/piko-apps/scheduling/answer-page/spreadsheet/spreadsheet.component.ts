@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angu
 import { MatDialog } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 
-import { UtilitiesService } from '../../../../my-own-library/utilities.service';
+import { utils } from '../../../../my-own-library/utilities';
 import { AlertDialogComponent } from '../../../../my-own-library/alert-dialog.component';
 import { SchedulingEvent, Answer, MySymbol } from '../../scheduling-event';
 
@@ -39,7 +39,6 @@ export class SpreadsheetComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialog: MatDialog,
-    public utils: UtilitiesService,
   ) {
   }
 
@@ -115,7 +114,7 @@ export class SpreadsheetComponent implements OnInit, OnDestroy {
           .map( e => e.symbolID );
     const scores = symbolIdsOfDate.map( id =>
         (event.symbols.find( e => e.id === id ) || new MySymbol() ).score );
-    return this.utils.average( scores );
+    return utils.array.average( scores );
   }
 
   /* for print */

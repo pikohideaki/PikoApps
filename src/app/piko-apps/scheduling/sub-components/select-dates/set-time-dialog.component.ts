@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { UtilitiesService } from '../../../../my-own-library/utilities.service';
+import { utils } from '../../../../my-own-library/utilities';
 
 @Component({
   selector: 'app-set-time-dialog',
@@ -46,8 +46,8 @@ import { UtilitiesService } from '../../../../my-own-library/utilities.service';
 })
 export class SetTimeDialogComponent implements OnInit {
 
-  hoursList   = this.utils.seq0(24);
-  minutesList = this.utils.seq0(60);
+  hoursList   = utils.number.seq0(24);
+  minutesList = utils.number.seq0(60);
 
   selectedHours   = 0;
   selectedMinutes = 0;
@@ -56,9 +56,7 @@ export class SetTimeDialogComponent implements OnInit {
   @Input() date: Date = new Date();
 
 
-  constructor(
-    private utils: UtilitiesService
-  ) { }
+  constructor() { }
 
   ngOnInit() {
     this.selectedHours   = this.date.getHours();

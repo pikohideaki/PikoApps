@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { MatDialog } from '@angular/material';
 
-import { UtilitiesService } from '../../../my-own-library/utilities.service';
+import { utils } from '../../../my-own-library/utilities';
 import { CloudFirestoreMediatorService } from '../../../firebase-mediator/cloud-firestore-mediator.service';
 import { ConfirmDialogComponent } from '../../../my-own-library/confirm-dialog.component';
 
@@ -39,7 +39,6 @@ export class AnswerPageComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
-    public utils: UtilitiesService,
     private database: CloudFirestoreMediatorService,
   ) {
   }
@@ -58,7 +57,7 @@ export class AnswerPageComponent implements OnInit, OnDestroy {
 
     this.answerDeadlineExpired$
       = this.event$.map( e =>
-          this.utils.compareDates( new Date(), this.utils.getTomorrow( e.answerDeadline ) ) === 1 );
+          utils.date.compare( new Date(), utils.date.getTomorrow( e.answerDeadline ) ) === 1 );
 
     /* subscriptions */
     this.event$

@@ -3,7 +3,6 @@ import { MatStepper, MatDialog } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/from';
 
-import { UtilitiesService } from '../../my-own-library/utilities.service';
 import { CloudFirestoreMediatorService } from '../../firebase-mediator/cloud-firestore-mediator.service';
 import { ConfirmDialogComponent } from '../../my-own-library/confirm-dialog.component';
 
@@ -38,7 +37,6 @@ export class SchedulingComponent implements OnInit, OnDestroy {
 
   constructor(
     public dialog: MatDialog,
-    public utils: UtilitiesService,
     private database: CloudFirestoreMediatorService
   ) {
   }

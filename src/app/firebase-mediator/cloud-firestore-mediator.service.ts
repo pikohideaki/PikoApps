@@ -5,7 +5,7 @@ import { AngularFirestore    } from 'angularfire2/firestore';
 import { AngularFireDatabase } from 'angularfire2/database';
 import * as firebase from 'firebase/app';
 
-import { UtilitiesService } from '../my-own-library/utilities.service';
+import { utils } from '../my-own-library/utilities';
 
 import { User } from '../classes/user';
 import { SchedulingEvent, Answer } from '../piko-apps/scheduling/scheduling-event';
@@ -50,7 +50,6 @@ export class CloudFirestoreMediatorService {
   constructor(
     private afs: AngularFirestore,
     private afdb: AngularFireDatabase,
-    private utils: UtilitiesService,
   ) {
     this.users$
       = this.afdb.list( this.fdPath.users, ref => ref.orderByChild('name_yomi') ).snapshotChanges()
@@ -80,7 +79,7 @@ export class CloudFirestoreMediatorService {
     };
     this.user = {
       setUser: ( uid: string, newUser: User ) => {
-        const newUserObj = this.utils.copyObject( newUser );
+        const newUserObj = utils.object.copy( newUser );
         delete newUserObj.databaseKey;
         return this.afdb.object(`${this.fdPath.users}/${uid}`).set( newUserObj );
       },
@@ -98,7 +97,7 @@ export class CloudFirestoreMediatorService {
 
     this.scheduling = {
       addEvent: ( value: SchedulingEvent ) => {
-        const copy = this.utils.copyObject( value );
+        const copy = utils.object.copy( value );
         delete copy.databaseKey;
         delete copy.selectedDatetimes;
         delete copy.answerDeadline;
@@ -108,7 +107,7 @@ export class CloudFirestoreMediatorService {
       },
 
       setEvent: ( eventID: string, value: SchedulingEvent ) => {
-        const copy = this.utils.copyObject( value );
+        const copy = utils.object.copy( value );
         delete copy.databaseKey;
         delete copy.selectedDatetimes;
         delete copy.answerDeadline;
@@ -129,7 +128,7 @@ export class CloudFirestoreMediatorService {
       },
 
       addAnswer: ( eventID: string, value: Answer ) => {
-        const copy = this.utils.copyObject( value );
+        const copy = utils.object.copy( value );
         delete copy.databaseKey;
         copy.selection
           = value.selection.map( e => ({ dateValue: e.date.valueOf(), symbolID: e.symbolID }) );
@@ -137,7 +136,7 @@ export class CloudFirestoreMediatorService {
       },
 
       setAnswer: ( eventID: string, answerID: string, value: Answer ) => {
-        const copy = this.utils.copyObject( value );
+        const copy = utils.object.copy( value );
         delete copy.databaseKey;
         copy.selection
           = value.selection.map( e => ({ dateValue: e.date.valueOf(), symbolID: e.symbolID }) );
@@ -151,7 +150,7 @@ export class CloudFirestoreMediatorService {
 
     this.feedbacks = {
       add: ( value: Feedback ) => {
-        const copy = this.utils.copyObject( value );
+        const copy = utils.object.copy( value );
         delete copy.databaseKey;
         delete copy.date;
         copy.timeStamp = value.date.valueOf();

@@ -5,7 +5,6 @@ import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import 'rxjs/add/operator/combineLatest';
 
-import { UtilitiesService } from '../../../my-own-library/utilities.service';
 import { CloudFirestoreMediatorService } from '../../../firebase-mediator/cloud-firestore-mediator.service';
 import { ConfirmDialogComponent } from '../../../my-own-library/confirm-dialog.component';
 
@@ -35,7 +34,6 @@ export class EditEventComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     public dialog: MatDialog,
-    public utils: UtilitiesService,
     private database: CloudFirestoreMediatorService
   ) {
     const myEventId$: Observable<string>

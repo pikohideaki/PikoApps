@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { UtilitiesService } from '../../../my-own-library/utilities.service';
-import { submatch } from '../../../my-own-library/utilities';
+import { utils } from '../../../my-own-library/utilities';
 
 
 type Variable = 'a'|'b'|'c'|'d'|'e'|
@@ -14,12 +13,10 @@ type Variable = 'a'|'b'|'c'|'d'|'e'|
 export class LambdaEvaluatorService {
 
   MAX_STEPS = 100;  // reduction再帰の回数上限
-  ALPHABETS = <Variable[]>( this.utils.getAlphabets('lower') );
+  ALPHABETS = <Variable[]>( utils.string.getAlphabets('lower') );
 
 
-  constructor(
-    private utils: UtilitiesService
-  ) { }
+  constructor() { }
 
 
   evalSequence( term ) {

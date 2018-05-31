@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import 'rxjs/add/operator/combineLatest';
 
-import { UtilitiesService } from '../../../../my-own-library/utilities.service';
+import { utils } from '../../../../my-own-library/utilities';
 import { CloudFirestoreMediatorService } from '../../../../firebase-mediator/cloud-firestore-mediator.service';
 import { ConfirmDialogComponent } from '../../../../my-own-library/confirm-dialog.component';
 
@@ -43,7 +43,6 @@ export class AnswerFormComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialog: MatDialog,
-    public utils: UtilitiesService,
     private database: CloudFirestoreMediatorService,
   ) { }
 
@@ -127,7 +126,7 @@ export class AnswerFormComponent implements OnInit, OnDestroy {
 
   symbolHeaderSelected( symbolID: string ) {
     const obj = this.dateToSymbolIdSource.value;
-    this.utils.objectForEach( obj, (_, key, o) => o[key] = symbolID );
+    utils.object.forEach( obj, (_, key, o) => o[key] = symbolID );
     this.dateToSymbolIdSource.next( obj );
   }
 
@@ -138,7 +137,7 @@ export class AnswerFormComponent implements OnInit, OnDestroy {
       userName: this.userName,
       comment:  this.comment,
       selection:
-        this.utils.objectKeysAsNumber( this.dateToSymbolIdSource.value )
+        utils.object.keysAsNumber( this.dateToSymbolIdSource.value )
           .map( key => ({ dateValue: key, symbolID: this.dateToSymbolIdSource.value[key] }) ),
     });
 

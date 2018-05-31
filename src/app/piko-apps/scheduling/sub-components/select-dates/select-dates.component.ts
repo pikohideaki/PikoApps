@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-import { UtilitiesService } from '../../../../my-own-library/utilities.service';
+import { utils } from '../../../../my-own-library/utilities';
 
 import { SetTimeDialogComponent } from './set-time-dialog.component';
 
@@ -45,7 +45,6 @@ export class SelectDatesComponent implements OnInit, OnDestroy {
 
   constructor(
     public dialog: MatDialog,
-    public utils: UtilitiesService,
   ) {
   }
 
@@ -53,14 +52,14 @@ export class SelectDatesComponent implements OnInit, OnDestroy {
     this.selectedDatesInit$
       = this.selectedDatetimesInit$
           .map( selectedDatetimesInit =>
-            this.utils.uniq(
+            utils.array.uniq(
               selectedDatetimesInit
-                .map( e => this.utils.getMidnightOfDate(e) )
+                .map( e => utils.date.toMidnight(e) )
                 .map( e => e.valueOf() ) ) );
 
     this.selectedDatetimesInit$.subscribe( selectedDatetimesInit => {
       selectedDatetimesInit.forEach( date => {
-        const date0 = this.utils.getMidnightOfDate(date).valueOf();
+        const date0 = utils.date.toMidnight(date).valueOf();
         if ( this.dateToTime.has( date0 ) ) {
           this.dateToTime.get( date0 ).push( date );
         } else {
@@ -81,7 +80,7 @@ export class SelectDatesComponent implements OnInit, OnDestroy {
               dateWithDefaultTime.setMinutes( this.defaultDatetime.getMinutes() );
               this.dateToTime.set( date.valueOf(), [dateWithDefaultTime] );
             }
-            return this.dateToTime.get( date.valueOf() ).sort( this.utils.compareDates );
+            return this.dateToTime.get( date.valueOf() ).sort( utils.date.compare );
           } ) );
 
     const selectedDatetimes$
@@ -123,7 +122,7 @@ export class SelectDatesComponent implements OnInit, OnDestroy {
 
 
   edit( date: Date ) {
-    const datetimes = this.dateToTime.get( this.utils.getMidnightOfDate(date).valueOf() );
+    const datetimes = this.dateToTime.get( utils.date.toMidnight(date).valueOf() );
     if ( !datetimes || datetimes.length === 0 ) return;
     const dateInArray = datetimes.find( e => e.valueOf() === date.valueOf() );
     const dialogRef = this.dialog.open( SetTimeDialogComponent, { disableClose: true } );
@@ -136,7 +135,7 @@ export class SelectDatesComponent implements OnInit, OnDestroy {
   }
 
   copy( date: Date ) {
-    const datetimes = this.dateToTime.get( this.utils.getMidnightOfDate(date).valueOf() );
+    const datetimes = this.dateToTime.get( utils.date.toMidnight(date).valueOf() );
     if ( !datetimes || datetimes.length === 0 ) return;
     const dateCopy = new Date( date );
     datetimes.push( dateCopy );
@@ -144,9 +143,9 @@ export class SelectDatesComponent implements OnInit, OnDestroy {
   }
 
   remove( date: Date ) {
-    const datetimes = this.dateToTime.get( this.utils.getMidnightOfDate(date).valueOf() );
+    const datetimes = this.dateToTime.get( utils.date.toMidnight(date).valueOf() );
     if ( !datetimes || datetimes.length === 0 ) return;
-    this.utils.removeIf( datetimes, ( e => e.valueOf() === date.valueOf() ) );
+    utils.array.removeIf( datetimes, ( e => e.valueOf() === date.valueOf() ) );
     this.dateToTimeChangedSource.next( Date.now() );
   }
 
