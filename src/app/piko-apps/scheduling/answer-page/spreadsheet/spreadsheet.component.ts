@@ -114,7 +114,7 @@ export class SpreadsheetComponent implements OnInit, OnDestroy {
           .map( e => e.symbolID );
     const scores = symbolIdsOfDate.map( id =>
         (event.symbols.find( e => e.id === id ) || new MySymbol() ).score );
-    return utils.array.average( scores );
+    return utils.number.roundAt( utils.array.average( scores ), 3 );
   }
 
   /* for print */
