@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
-import { MyUserInfoService } from '../../firebase-mediator/my-user-info.service';
+import { UserService } from '../../firebase-mediator/my-user-info.service';
 
 
 @Component({
@@ -24,9 +24,9 @@ export class ToolsCollectionComponent implements OnInit {
     }[]>;
 
   constructor(
-    private myUserInfo: MyUserInfoService
+    private user: UserService
   ) {
-    this.apps$ = this.myUserInfo.signedIn$.map( signedIn => [
+    this.apps$ = this.user.signedIn$.map( signedIn => [
         { routerLink: '/tools-collection/tsv2json',
           inService: true, title: 'CSV to JSON', subtitle: 'テキスト変換(CSV to JSON)' },
         { routerLink: '/tools-collection/json-pretty-print',

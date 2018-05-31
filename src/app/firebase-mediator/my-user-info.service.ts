@@ -8,12 +8,12 @@ import { CloudFirestoreMediatorService } from './cloud-firestore-mediator.servic
 
 
 @Injectable()
-export class MyUserInfoService {
+export class UserService {
   private uid: string = '';
   uid$:      Observable<string>;
   signedIn$: Observable<boolean>;
 
-  private myUserInfo$: Observable<User>;
+  private user$: Observable<User>;
   name$:      Observable<string>;
   name_yomi$: Observable<string>;
 
@@ -26,14 +26,14 @@ export class MyUserInfoService {
     this.signedIn$      = this.afAuth.authState.map( user => !!user );
     this.uid$           = this.afAuth.authState.map( user => ( !user ? '' : user.uid ) );
 
-    this.myUserInfo$ = Observable.combineLatest(
+    this.user$ = Observable.combineLatest(
         this.uid$,
         this.database.users$,
         ( uid: string, users: User[] ) =>
           (!uid || users.length === 0) ? new User() : users.find( e => e.databaseKey === uid ) || new User() );
 
-    this.name$      = this.myUserInfo$.map( e => e.name      ).distinctUntilChanged();
-    this.name_yomi$ = this.myUserInfo$.map( e => e.name_yomi ).distinctUntilChanged();
+    this.name$      = this.user$.map( e => e.name      ).distinctUntilChanged();
+    this.name_yomi$ = this.user$.map( e => e.name_yomi ).distinctUntilChanged();
 
     this.uid$.subscribe( val => this.uid = val );
   }

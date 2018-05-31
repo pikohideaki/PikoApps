@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
-import { MyUserInfoService } from '../../firebase-mediator/my-user-info.service';
+import { UserService } from '../../firebase-mediator/my-user-info.service';
 
 
 @Component({
@@ -24,9 +24,9 @@ export class ToyBoxComponent implements OnInit {
     }[]>;
 
   constructor(
-    private myUserInfo: MyUserInfoService
+    private user: UserService
   ) {
-    this.apps$ = this.myUserInfo.signedIn$.map( signedIn => [
+    this.apps$ = this.user.signedIn$.map( signedIn => [
         { routerLink: '/toybox/lambda-interpreter',
           inService: true, title: 'Lambda Calculus Interpreter', subtitle: 'λ計算インタプリタ' },
       ] );
