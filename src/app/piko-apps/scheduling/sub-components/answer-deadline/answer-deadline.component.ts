@@ -21,7 +21,7 @@ export class AnswerDeadlineComponent implements OnInit {
   }
 
 
-  sinceToday( date: Date ): boolean {
+  laterToday( date: Date ): boolean {
     if ( !date ) return false;
     const today = new Date();
     if ( date.getFullYear() > today.getFullYear() ) return true;

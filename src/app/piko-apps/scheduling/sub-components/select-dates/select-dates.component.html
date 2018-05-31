@@ -1,6 +1,6 @@
 <app-multiple-date-picker *ngIf="selectedDatetimes"
   dayLabelLanguage="eng"
-  [filterFunction]="sinceToday"
+  [filterFunction]="laterToday"
   [initialDateList$]="selectedDatesInit$"
   (selectedDatesChange)="selectedDatesOnChange( $event )">
 </app-multiple-date-picker>

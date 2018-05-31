@@ -108,16 +108,11 @@ export class SelectDatesComponent implements OnInit, OnDestroy {
   }
 
 
-  sinceToday( date: Date ): boolean {
+  laterToday( date: Date ): boolean {
     if ( !date ) return false;
-    const today = new Date();
-    if ( date.getFullYear() > today.getFullYear() ) return true;
-    if ( date.getFullYear() < today.getFullYear() ) return false;
-    if ( date.getMonth()    > today.getMonth()    ) return true;
-    if ( date.getMonth()    < today.getMonth()    ) return false;
-    if ( date.getDate()     > today.getDate()     ) return true;
-    if ( date.getDate()     < today.getDate()     ) return false;
-    return true;
+    const today = new Date( (new Date(      ).setHours(0, 0, 0, 0) ) );
+    const date0 = new Date( (new Date( date ).setHours(0, 0, 0, 0) ) );
+    return date0.getTime() >= today.getTime();
   }
 
 
