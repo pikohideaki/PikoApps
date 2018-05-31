@@ -25,7 +25,12 @@
 
 textarea.prettyprint {
   overflow: hidden;
-  resize: vertical;
+	resize: vertical;
+	caret-color: white;
+}
+
+textarea.prettyprint::placeholder {
+	color: #ffffff91;
 }
 
 /* ========================
