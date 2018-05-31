@@ -19,17 +19,17 @@ export class Tsv2jsonComponent implements OnInit {
       { value: '\t', viewValue: 'タブ (\\t)' },
       { value: ',',  viewValue: 'カンマ (,)' },
     ];
-  separatorSource = new BehaviorSubject<string>('\t');
+
+  private separatorSource = new BehaviorSubject<string>('\t');
   separator$ = this.separatorSource.asObservable();
 
-  tsvHeaderTextSource = new BehaviorSubject<string>('');
-  tsvTextSource       = new BehaviorSubject<string>('');
+  private tsvHeaderTextSource = new BehaviorSubject<string>('');
+  tsvTextSource = new BehaviorSubject<string>('');
 
   tableHeader$: Observable<string[]>;
   table$: Observable<any[][]>;
 
   jsonText$: Observable<string>;
-
 
 
   constructor() {
@@ -69,7 +69,6 @@ export class Tsv2jsonComponent implements OnInit {
 
 
   changeSeparator( sep: string ) {
-    console.log(sep);
     this.separatorSource.next( sep );
   }
 
@@ -89,7 +88,4 @@ export class Tsv2jsonComponent implements OnInit {
     });
     return JSON.stringify( data, null, ' ' );
   }
-
-
-
 }
