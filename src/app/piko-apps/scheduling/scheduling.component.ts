@@ -34,6 +34,8 @@ export class SchedulingComponent implements OnInit, OnDestroy {
   eventPageUrlPrefix = '';
   eventPageId = '';
 
+  linkTitle: string = '日程調整';
+
 
   constructor(
     public dialog: MatDialog,
