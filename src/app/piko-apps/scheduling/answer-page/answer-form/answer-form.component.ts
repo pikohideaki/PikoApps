@@ -23,12 +23,10 @@ import { SchedulingEvent, Answer, MySymbol } from '../../scheduling-event';
 export class AnswerFormComponent implements OnInit, OnDestroy {
   private alive = true;
 
-  @Input() private eventId: string;
+  @Input() eventId$: Observable<string>;
   @Input() event$: Observable<SchedulingEvent>;
-  event: SchedulingEvent;
 
   @Input() answerId$: Observable<string>;
-  answerId: string;
   @Output() answerIdChange = new EventEmitter<string>();
 
   userName = '';  /* bound to input element */
@@ -36,9 +34,7 @@ export class AnswerFormComponent implements OnInit, OnDestroy {
 
   private dateToSymbolIdSource = new BehaviorSubject<Object>({});
   dateToSymbolId$ = this.dateToSymbolIdSource.asObservable();
-  dateToSymbolId: Object;
   allDatesSelected$: Observable<boolean>;
-  allDatesSelected: boolean;
 
 
   constructor(
@@ -57,22 +53,6 @@ export class AnswerFormComponent implements OnInit, OnDestroy {
             (answerId, answers) => ( answers.find( e => e.databaseKey === answerId ) || new Answer() ) );
 
     /* subscriptions */
-    this.allDatesSelected$
-      .takeWhile( () => this.alive )
-      .subscribe( val => this.allDatesSelected = val );
-
-    this.answerId$
-      .takeWhile( () => this.alive )
-      .subscribe( val => this.answerId = val );
-
-    this.event$
-      .takeWhile( () => this.alive )
-      .subscribe( val => this.event = val );
-
-    this.dateToSymbolId$
-      .takeWhile( () => this.alive )
-      .subscribe( val => this.dateToSymbolId = val );
-
     this.event$
       .takeWhile( () => this.alive )
       .subscribe( event => {
@@ -118,21 +98,20 @@ export class AnswerFormComponent implements OnInit, OnDestroy {
   }
 
 
-  symbolSelected( date: Date, symbolID: string ) {
+  symbolSelected( date: Date, symbolId: string ) {
     const obj = this.dateToSymbolIdSource.value;
-    obj[ date.valueOf() ] = symbolID;
+    obj[ date.valueOf() ] = symbolId;
     this.dateToSymbolIdSource.next( obj );
   }
 
-  symbolHeaderSelected( symbolID: string ) {
+  symbolHeaderSelected( symbolId: string ) {
     const obj = this.dateToSymbolIdSource.value;
-    utils.object.forEach( obj, (_, key, o) => o[key] = symbolID );
+    utils.object.forEach( obj, (_, key, o) => o[key] = symbolId );
     this.dateToSymbolIdSource.next( obj );
   }
 
 
-  submitAnswer() {
-    const answerId = this.answerId;
+  submitAnswer( eventId: string, answerId: string ) {
     const newAnswer = new Answer( null, {
       userName: this.userName,
       comment:  this.comment,
@@ -142,21 +121,21 @@ export class AnswerFormComponent implements OnInit, OnDestroy {
     });
 
     if ( answerId === '' ) {
-      this.database.scheduling.addAnswer( this.eventId, newAnswer );
+      this.database.scheduling.addAnswer( eventId, newAnswer );
     } else {
-      this.database.scheduling.setAnswer( this.eventId, answerId, newAnswer );
+      this.database.scheduling.setAnswer( eventId, answerId, newAnswer );
     }
     this.resetForm();
   }
 
-  deleteAnswer() {
-    const answerId = this.answerId;
+
+  deleteAnswer( eventId: string, answerId: string ) {
     if ( !answerId ) return;
     const dialogRef = this.dialog.open( ConfirmDialogComponent );
     dialogRef.componentInstance.message = 'このデータを削除しますか？';
     dialogRef.afterClosed().subscribe( result => {
       if ( result === 'yes' ) {
-        this.database.scheduling.removeAnswer( this.eventId, answerId );
+        this.database.scheduling.removeAnswer( eventId, answerId );
         this.resetForm();
       }
     });

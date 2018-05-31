@@ -1,4 +1,12 @@
-<div *ngIf="dataIsReady">
+<ng-container *ngIf="{
+  eventId               : eventId$               | async,
+  event                 : event$                 | async,
+  answerDeadlineExpired : answerDeadlineExpired$ | async,
+  spreadSheet           : spreadSheet$           | async
+} as data">
+
+
+<div *ngIf="!!event && !!answerDeadlineExpired && !!spreadSheet">
   <div *ngIf="flipTableState; then rowDateTable; else rowUserTable"></div>
   <ng-template #rowDateTable>
     <table
@@ -117,3 +125,4 @@
   </ng-template>
 
 </div>
+</ng-container>

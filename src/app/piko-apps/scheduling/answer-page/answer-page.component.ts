@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Title }     from '@angular/platform-browser';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
@@ -21,15 +21,11 @@ import { EditPasswordDialogComponent } from './edit-password-dialog.component';
     './answer-page.component.css'
   ]
 })
-export class AnswerPageComponent implements OnInit, OnDestroy {
-  private alive = true;
+export class AnswerPageComponent implements OnInit {
 
   eventId$: Observable<string>;
-  eventId: string;  /* for routing */
   event$: Observable<SchedulingEvent>;
-  event: SchedulingEvent;  /* for template */
   answerDeadlineExpired$: Observable<boolean>;
-  answerDeadlineExpired: boolean;  /* for template */
 
   private answerIdSource = new BehaviorSubject<string>('');
   answerId$ = this.answerIdSource.asObservable();
@@ -63,21 +59,6 @@ export class AnswerPageComponent implements OnInit, OnDestroy {
     this.answerDeadlineExpired$
       = this.event$.map( e =>
           utils.date.compare( new Date(), utils.date.getTomorrow( e.answerDeadline ) ) === 1 );
-
-    /* subscriptions */
-    this.event$
-      .takeWhile( () => this.alive )
-      .subscribe( val => this.event = val );
-    this.eventId$
-      .takeWhile( () => this.alive )
-      .subscribe( val => this.eventId = val );
-    this.answerDeadlineExpired$
-      .takeWhile( () => this.alive )
-      .subscribe( val => this.answerDeadlineExpired = val );
-  }
-
-  ngOnDestroy() {
-    this.alive = false;
   }
 
 
@@ -85,13 +66,13 @@ export class AnswerPageComponent implements OnInit, OnDestroy {
     this.answerIdSource.next( answerId );
   }
 
-  editEvent() {
-    const path = [`scheduling/edit-event/${this.eventId}`];
-    if ( !this.event.password ) {
+  editEvent( eventId: string, password: string ) {
+    const path = [`scheduling/edit-event/${eventId}`];
+    if ( !password ) {
       this.router.navigate( path );
     } else {
       const dialogRef = this.dialog.open( EditPasswordDialogComponent );
-      dialogRef.componentInstance.passwordAnswer = this.event.password;
+      dialogRef.componentInstance.passwordAnswer = password;
       dialogRef.afterClosed().subscribe( result => {
         if ( result === 'yes' ) this.router.navigate( path );
       });

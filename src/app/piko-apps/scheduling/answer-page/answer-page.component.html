@@ -1,33 +1,41 @@
-<div class="body-with-padding">
-  <app-waiting-spinner [done]="!!event"></app-waiting-spinner>
+<ng-container *ngIf="{
+    eventId               : eventId$               | async,
+    event                 : event$                 | async,
+    answerDeadlineExpired : answerDeadlineExpired$ | async
+  } as data">
 
-  <ng-container *ngIf="event">
+
+<div class="body-with-padding">
+  <app-waiting-spinner [done]="!!data.event"></app-waiting-spinner>
+
+  <ng-container *ngIf="data.event">
     <H2>
-      イベント名：{{event.title}}
-      <button mat-icon-button (click)="editEvent()" title="イベントを編集">
+      イベント名：{{data.event.title}}
+      <button mat-icon-button (click)="editEvent( data.eventId )" title="イベントを編集">
         <mat-icon aria-hidden="true">edit</mat-icon>
       </button>
     </H2>
-    <p>ノート：{{event.notes}}</p>
+    <p>ノート：{{data.event.notes}}</p>
     <p>回答期限：
-      <span [class.answerDeadlineExpired]="answerDeadlineExpired">
-        {{utils.toYMD( event.answerDeadline )}}
-        <span *ngIf="answerDeadlineExpired">（回答の受付を終了しました。）</span>
+      <span [class.answerDeadlineExpired]="data.answerDeadlineExpired">
+        {{utils.toYMD( data.event.answerDeadline )}}
+        <span *ngIf="data.answerDeadlineExpired">（回答の受付を終了しました。）</span>
       </span>
     </p>
   </ng-container>
 
+  <!-- 結果一覧 -->
   <app-spreadsheet
-    data-comment="結果一覧"
     [event$]="event$"
-    [answerDeadlineExpired$]="answerDeadlineExpired$"
+    [answerDeadlineExpired$]="data.answerDeadlineExpired$"
     (answerIdChange)="answerIdOnChange( $event )" >
   </app-spreadsheet>
 
-  <ng-container *ngIf="event">
-    <table class="margined-element" data-comment="記号の説明">
+  <ng-container *ngIf="!!data.event">
+    <!-- 記号の説明 -->
+    <table class="margined-element">
       <tbody>
-        <ng-container *ngFor="let symbol of event.symbols">
+        <ng-container *ngFor="let symbol of data.event.symbols">
           <tr *ngIf="symbol.useThis">
             <th><mat-icon>{{symbol.iconName}}</mat-icon></th>
             <td>：</td>
@@ -42,15 +50,16 @@
 
   <hr>
 
-  <div *ngIf="!answerDeadlineExpired && !!event"
+  <!-- 入力 -->
+  <div *ngIf="!data.answerDeadlineExpired && !!data.event"
       class="margined-element answer-form"
-      data-comment="入力"
       #answerForm>
     <app-answer-form
       [event$]="event$"
-      [eventId]="eventId"
+      [eventId$]="eventId$"
       [answerId$]="answerId$"
       (answerIdChange)="answerIdOnChange( $event )" >
     </app-answer-form>
   </div>
 </div>
+</ng-container>
