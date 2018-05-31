@@ -17,17 +17,29 @@ import { SchedulingEvent, MySymbol } from '../scheduling-event';
   styleUrls: ['./edit-event.component.css']
 })
 export class EditEventComponent implements OnInit {
-  title$:             Observable<string>;
-  notes$:             Observable<string>;
-  selectedDatetimes$: Observable<Date[]>;
-  answerDeadline$:    Observable<Date>;
-  symbols$:           Observable<MySymbol[]>;
-  password$:          Observable<string>;
+  /**
+   * ページ読み込み時のイベント情報 myEventInit を編集する．
+   * [ToDo] 編集反映時に別のユーザーが編集を加えていたら確認
+   */
 
-  private myEventId = '';  /* used in submitting to firebase */
-  myEvent = new SchedulingEvent();
+  myEventId$: Observable<string>
+    = this.route.paramMap
+        .switchMap( (params: ParamMap) => params.getAll('eventId') );
 
-  dataIsReady = false;
+  myEvent$: Observable<SchedulingEvent>
+    = this.myEventId$.combineLatest(
+        this.database.schedulingEvents$,
+        (eventId, list) => list.find( e => e.databaseKey === eventId ) || new SchedulingEvent() );
+
+  myEventInit$: Observable<SchedulingEvent>
+    = this.myEvent$.first();
+
+  private myEventEditingSource
+    = new BehaviorSubject<SchedulingEvent>( new SchedulingEvent() );
+  myEventEditing$
+    = Observable.combineLatest(
+        this.myEventInit$,
+        this.myEventEditingSource.asObservable().skip(1) );
 
 
   constructor(
@@ -36,27 +48,6 @@ export class EditEventComponent implements OnInit {
     public dialog: MatDialog,
     private database: CloudFirestoreMediatorService
   ) {
-    const myEventId$: Observable<string>
-      = this.route.paramMap
-          .switchMap( (params: ParamMap) => params.getAll('eventId') );
-
-    const myEvent$: Observable<SchedulingEvent>
-      = myEventId$.combineLatest(
-            this.database.schedulingEvents$,
-            (eventId, list) => list.find( e => e.databaseKey === eventId ) || new SchedulingEvent() );
-
-    this.title$             = myEvent$.map( e => e.title );
-    this.notes$             = myEvent$.map( e => e.notes );
-    this.selectedDatetimes$ = myEvent$.map( e => e.selectedDatetimes );
-    this.answerDeadline$    = myEvent$.map( e => e.answerDeadline );
-    this.symbols$           = myEvent$.map( e => e.symbols );
-    this.password$          = myEvent$.map( e => e.password );
-
-    myEventId$.first().subscribe( val => this.myEventId = val );
-    myEvent$.subscribe( val => {
-      this.myEvent = val;
-      this.dataIsReady = true;
-    });
   }
 
   ngOnInit() {
@@ -64,46 +55,71 @@ export class EditEventComponent implements OnInit {
 
 
   /* callback functions */
-  titleChange            ( value: string     ) { this.myEvent.title             = value; }
-  notesChange            ( value: string     ) { this.myEvent.notes             = value; }
-  selectedDatetimesChange( value: Date[]     ) { this.myEvent.selectedDatetimes = value; }
-  answerDeadlineChange   ( value: Date       ) { this.myEvent.answerDeadline    = value; }
-  symbolsChange          ( value: MySymbol[] ) { this.myEvent.symbols           = value; }
-  passwordChange         ( value: string     ) { this.myEvent.password          = value; }
+  titleChange( title: string ) {
+    const curr = this.myEventEditingSource.getValue();
+    curr.title = title;
+    this.myEventEditingSource.next( curr );
+  }
+  notesChange( notes: string ) {
+    const curr = this.myEventEditingSource.getValue();
+    curr.notes = notes;
+    this.myEventEditingSource.next( curr );
+  }
+  selectedDatetimesChange( selectedDatetimes: Date[] ) {
+    const curr = this.myEventEditingSource.getValue();
+    curr.selectedDatetimes = selectedDatetimes;
+    this.myEventEditingSource.next( curr );
+  }
+  answerDeadlineChange( answerDeadline: Date ) {
+    const curr = this.myEventEditingSource.getValue();
+    curr.answerDeadline = answerDeadline;
+    this.myEventEditingSource.next( curr );
+  }
+  symbolsChange( symbols: MySymbol[] ) {
+    const curr = this.myEventEditingSource.getValue();
+    curr.symbols = symbols;
+    this.myEventEditingSource.next( curr );
+  }
+  passwordChange( password: string ) {
+    const curr = this.myEventEditingSource.getValue();
+    curr.password = password;
+    this.myEventEditingSource.next( curr );
+  }
 
 
-  exit() {
+  exit( myEventId: string ) {
     const dialogRef = this.dialog.open( ConfirmDialogComponent );
     dialogRef.componentInstance.message = '更新を破棄して回答ページへ戻ります。よろしいですか？';
     dialogRef.afterClosed().subscribe( result => {
       if ( result === 'yes' ) {
-        this.router.navigate([`scheduling/answer/${this.myEventId}`]);
+        this.router.navigate([`scheduling/answer/${myEventId}`]);
       }
     });
   }
 
-  updateEvent() {
+
+  updateEvent( myEventId: string, myEvent: SchedulingEvent ) {
     const dialogRef = this.dialog.open( ConfirmDialogComponent );
     dialogRef.componentInstance.message = 'イベントを更新します。よろしいですか？';
     dialogRef.afterClosed().subscribe( result => {
       if ( result === 'yes' ) {
         /* remove selection for removed dates from answers */
-        const selectedDateValues = this.myEvent.selectedDatetimes.map( e => e.valueOf() );
-        this.myEvent.answers.forEach( answer => {
+        const selectedDateValues = myEvent.selectedDatetimes.map( e => e.valueOf() );
+        myEvent.answers.forEach( answer => {
           answer.selection
             = answer.selection.filter( sl => selectedDateValues.includes( sl.date.valueOf() ) );
         });
         /* add default selection to answers for added dates */
-        this.myEvent.selectedDatetimes.forEach( date => {
-          this.myEvent.answers.forEach( answer => {
+        myEvent.selectedDatetimes.forEach( date => {
+          myEvent.answers.forEach( answer => {
             if ( !answer.selection.map( e => e.date.valueOf() ).includes( date.valueOf() ) ) {
               answer.selection.push( { date: date, symbolID: '' } );
             }
           });
         });
 
-        this.database.scheduling.setEvent( this.myEventId, this.myEvent );
-        this.router.navigate([`scheduling/answer/${this.myEventId}`]);
+        this.database.scheduling.setEvent( myEventId, myEvent );
+        this.router.navigate([`scheduling/answer/${myEventId}`]);
       }
     });
   }
