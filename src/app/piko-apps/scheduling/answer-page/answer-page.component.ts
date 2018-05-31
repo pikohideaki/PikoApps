@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Title }     from '@angular/platform-browser';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
@@ -36,6 +37,7 @@ export class AnswerPageComponent implements OnInit, OnDestroy {
 
 
   constructor(
+    private titleService: Title,
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
@@ -45,6 +47,9 @@ export class AnswerPageComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
+    // set browser title
+    this.titleService.setTitle('日程調整');
+
     this.eventId$
       = this.route.paramMap
           .switchMap( (params: ParamMap) => params.getAll('eventId') );
