@@ -44,12 +44,16 @@
 
     <div class="margined-element">
       <button mat-raised-button color="primary" matStepperPrevious>Back</button>
-      <button mat-raised-button color="accent"
+      <button mat-raised-button color="warn"
           (click)="updateEvent()"
           [disabled]="!myEvent.title ||
                       !myEvent.answerDeadline ||
                        myEvent.selectedDatetimes.length === 0" >
         イベントを更新
+      </button>
+      <button mat-raised-button color="accent"
+          (click)="exit()">
+        更新せずに回答ページへ戻る
       </button>
       <div class="margined-element">
         <p class="error-message" *ngIf="!myEvent.title">

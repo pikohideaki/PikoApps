@@ -72,6 +72,16 @@ export class EditEventComponent implements OnInit {
   passwordChange         ( value: string     ) { this.myEvent.password          = value; }
 
 
+  exit() {
+    const dialogRef = this.dialog.open( ConfirmDialogComponent );
+    dialogRef.componentInstance.message = '更新を破棄して回答ページへ戻ります。よろしいですか？';
+    dialogRef.afterClosed().subscribe( result => {
+      if ( result === 'yes' ) {
+        this.router.navigate([`scheduling/answer/${this.myEventId}`]);
+      }
+    });
+  }
+
   updateEvent() {
     const dialogRef = this.dialog.open( ConfirmDialogComponent );
     dialogRef.componentInstance.message = 'イベントを更新します。よろしいですか？';
