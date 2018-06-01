@@ -293,22 +293,17 @@ export const utils = {
               .map( dateNumber => new Date( year, month, dateNumber, 0, 0, 0, 0 ) );
     },
 
+    /**
+     * date1  <  date2 --> -1
+     * date1  >  date2 -->  1
+     * date1 === date2 -->  0
+     */
     compare: ( date1: Date, date2: Date ): -1|0|1 => {
-      if ( date1.getFullYear()     > date2.getFullYear()     ) return  1;
-      if ( date1.getFullYear()     < date2.getFullYear()     ) return -1;
-      if ( date1.getMonth()        > date2.getMonth()        ) return  1;
-      if ( date1.getMonth()        < date2.getMonth()        ) return -1;
-      if ( date1.getDate()         > date2.getDate()         ) return  1;
-      if ( date1.getDate()         < date2.getDate()         ) return -1;
-      if ( date1.getHours()        > date2.getHours()        ) return  1;
-      if ( date1.getHours()        < date2.getHours()        ) return -1;
-      if ( date1.getMinutes()      > date2.getMinutes()      ) return  1;
-      if ( date1.getMinutes()      < date2.getMinutes()      ) return -1;
-      if ( date1.getSeconds()      > date2.getSeconds()      ) return  1;
-      if ( date1.getSeconds()      < date2.getSeconds()      ) return -1;
-      if ( date1.getMilliseconds() > date2.getMilliseconds() ) return  1;
-      if ( date1.getMilliseconds() < date2.getMilliseconds() ) return -1;
-      return 0;
+      const date1value = date1.getTime();
+      const date2value = date2.getTime();
+      if ( date1value  <  date2value ) return -1;
+      if ( date1value === date2value ) return  0;
+      if ( date1value  >  date2value ) return  1;
     },
 
     getDayStringJp: ( dat: Date ) =>
