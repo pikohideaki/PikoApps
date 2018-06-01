@@ -93,4 +93,15 @@ export class SpreadsheetComponent implements OnInit {
   userClicked( answer: Answer ) {
     this.answerIdChange.emit( answer.databaseKey );
   }
+
+  toYMD( date: Date ) {
+    return utils.date.toYMD(date);
+  }
+  getDayStringJp( date: Date ) {
+    return utils.date.getDayStringJp(date);
+  }
+  toHM( date: Date ) {
+    return utils.date.toHM(date);
+  }
+
 }

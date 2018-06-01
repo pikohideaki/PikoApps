@@ -140,4 +140,16 @@ export class AnswerFormComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  toYMD( date: Date ) {
+    return utils.date.toYMD(date);
+  }
+  getDayStringEng( date: Date ) {
+    return utils.date.getDayStringEng(date);
+  }
+  toHM( date: Date ) {
+    return utils.date.toHM(date);
+  }
+
+
 }

@@ -2,7 +2,8 @@
   eventId               : eventId$               | async,
   event                 : event$                 | async,
   answerDeadlineExpired : answerDeadlineExpired$ | async,
-  spreadSheet           : spreadSheet$           | async
+  spreadSheet           : spreadSheet$           | async,
+  symbols               : symbols$               | async
 } as data">
 
 
@@ -15,15 +16,15 @@
         <tr>
           <th>日程 <button mat-button (click)="flipTable()">行列入れ替え</button></th>
           <th>スコア</th>
-          <ng-container *ngFor="let symbol of symbols">
+          <ng-container *ngFor="let symbol of data.symbols">
             <th *ngIf="symbol.useThis">
               <mat-icon aria-hidden="true" [title]="symbol.description">
                 {{symbol.iconName}}
               </mat-icon>
             </th>
           </ng-container>
-          <th *ngFor="let answer of answers">
-            <span *ngIf="answerDeadlineExpired; then thenBlock; else elseBlock"></span>
+          <th *ngFor="let answer of data.answers">
+            <span *ngIf="data.answerDeadlineExpired; then thenBlock; else elseBlock"></span>
             <ng-template #thenBlock>
               {{answer.userName}}
             </ng-template>
@@ -36,35 +37,35 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let datetime of event.selectedDatetimes"
-            [class.dateIsGood]="7 <= getAverageScore( event, datetime )
-                                  && getAverageScore( event, datetime ) < 10"
-            [class.dateIsPerfect]="getAverageScore( event, datetime ) === 10" >
+        <tr *ngFor="let datetime of data.event.selectedDatetimes"
+            [class.dateIsGood]="7 <= getAverageScore( data.event, datetime )
+                                  && getAverageScore( data.event, datetime ) < 10"
+            [class.dateIsPerfect]="getAverageScore( data.event, datetime ) === 10" >
           <th>
-            {{utils.toYMD( datetime )}}
-            （{{utils.getDayStringJp( datetime )}}）
-            {{utils.toHM( datetime )}}
+            {{toYMD( datetime )}}
+            （{{getDayStringJp( datetime )}}）
+            {{toHM( datetime )}}
           </th>
-          <th>{{getAverageScore( event, datetime )}}</th>
-          <ng-container *ngFor="let symbol of symbols">
+          <th>{{getAverageScore( data.event, datetime )}}</th>
+          <ng-container *ngFor="let symbol of data.symbols">
             <td *ngIf="symbol.useThis">
-              {{spreadSheet[ datetime.valueOf() ][ symbol.id ]}}
+              {{data.spreadSheet[ datetime.valueOf() ][ symbol.id ]}}
               <span class="small-font">人</span>
             </td>
           </ng-container>
-          <td *ngFor="let answer of answers">
+          <td *ngFor="let answer of data.answers">
             <mat-icon>
-              {{getIconNameOfAnswer( answer, datetime, symbols )}}
+              {{getIconNameOfAnswer( answer, datetime, data.symbols )}}
             </mat-icon>
           </td>
         </tr>
         <tr>
           <th>コメント</th>
           <th><!-- score average --></th>
-          <ng-container *ngFor="let symbol of symbols">
+          <ng-container *ngFor="let symbol of data.symbols">
             <td *ngIf="symbol.useThis"></td>
           </ng-container>
-          <td *ngFor="let answer of answers">
+          <td *ngFor="let answer of data.answers">
             <button mat-icon-button
                 title="コメントあり"
                 (click)="commentOnClick( answer.comment )">
@@ -84,18 +85,18 @@
       <thead>
         <tr>
           <th>日程 <button mat-button (click)="flipTable()">行列入れ替え</button></th>
-          <th *ngFor="let datetime of event.selectedDatetimes">
-            {{utils.toYMD( datetime )}}
-            （{{utils.getDayStringJp( datetime )}}）<br>
-            {{utils.toHM( datetime )}}
+          <th *ngFor="let datetime of data.event.selectedDatetimes">
+            {{toYMD( datetime )}}
+            （{{getDayStringJp( datetime )}}）<br>
+            {{toHM( datetime )}}
           </th>
           <th>コメント</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let answer of answers">
+        <tr *ngFor="let answer of data.answers">
           <th>
-            <span *ngIf="answerDeadlineExpired; then thenBlock; else elseBlock"></span>
+            <span *ngIf="data.answerDeadlineExpired; then thenBlock; else elseBlock"></span>
             <ng-template #thenBlock>
               {{answer.userName}}
             </ng-template>
@@ -105,9 +106,9 @@
               </button>
             </ng-template>
           </th>
-          <td *ngFor="let datetime of event.selectedDatetimes">
+          <td *ngFor="let datetime of data.event.selectedDatetimes">
             <mat-icon>
-              {{getIconNameOfAnswer( answer, datetime, symbols )}}
+              {{getIconNameOfAnswer( answer, datetime, data.symbols )}}
             </mat-icon>
           </td>
           <td>

@@ -18,7 +18,7 @@
     <p>ノート：{{data.event.notes}}</p>
     <p>回答期限：
       <span [class.answerDeadlineExpired]="data.answerDeadlineExpired">
-        {{utils.toYMD( data.event.answerDeadline )}}
+        {{toYMD( data.event.answerDeadline )}}
         <span *ngIf="data.answerDeadlineExpired">（回答の受付を終了しました。）</span>
       </span>
     </p>

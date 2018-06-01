@@ -36,9 +36,9 @@
   <tbody>
     <tr *ngFor="let datetime of data.event.selectedDatetimes">
       <th>
-        {{utils.toYMD( datetime )}}
-        ({{utils.getDayStringEng( datetime )}})
-        {{utils.toHM( datetime )}}
+        {{toYMD( datetime )}}
+        ({{getDayStringEng( datetime )}})
+        {{toHM( datetime )}}
       </th>
       <ng-container *ngFor="let symbol of data.event.symbols">
         <td *ngIf="symbol.useThis">

@@ -82,4 +82,9 @@ export class AnswerPageComponent implements OnInit {
   scrollTo( targetElement ) {
     targetElement.scrollIntoView();
   }
+
+  toYMD( date: Date ) {
+    return utils.date.toYMD(date);
+  }
+
 }
