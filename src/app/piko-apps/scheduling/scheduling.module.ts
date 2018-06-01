@@ -20,6 +20,8 @@ import { SpreadsheetComponent } from './answer-page/spreadsheet/spreadsheet.comp
 import { AnswerFormComponent } from './answer-page/answer-form/answer-form.component';
 import { PasswordComponent } from './sub-components/password/password.component';
 import { EditPasswordDialogComponent } from './answer-page/edit-password-dialog.component';
+import { DateUserTableComponent } from './answer-page/spreadsheet/date-user-table/date-user-table.component';
+import { UserDateTableComponent } from './answer-page/spreadsheet/user-date-table/user-date-table.component';
 
 
 @NgModule({
@@ -49,6 +51,8 @@ import { EditPasswordDialogComponent } from './answer-page/edit-password-dialog.
     AnswerFormComponent,
     PasswordComponent,
     EditPasswordDialogComponent,
+    DateUserTableComponent,
+    UserDateTableComponent,
   ],
   entryComponents: [
     SetTimeDialogComponent,
