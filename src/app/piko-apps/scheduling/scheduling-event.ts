@@ -1,4 +1,4 @@
-import { entries } from '../../my-own-library/utilities';
+import { utils } from '../../my-own-library/utilities';
 
 export class SchedulingEvent {
   databaseKey:       string     = '';
@@ -27,7 +27,7 @@ export class SchedulingEvent {
     this.selectedDatetimes = (initObj.selectedDatetimesTimeStamps || []).map( e => new Date( e || 0 ) );
     this.answerDeadline = new Date( initObj.answerDeadlineTimeStamp || 0 );
     this.symbols = ( initObj.symbols || [] );
-    this.answers = ( entries( initObj.answers ).map( e => new Answer( e.key, e.value ) ) || [] );
+    this.answers = ( utils.object.entries( initObj.answers ).map( e => new Answer( e.key, e.value ) ) || [] );
     this.password = ( initObj.password || '' );
   }
 }

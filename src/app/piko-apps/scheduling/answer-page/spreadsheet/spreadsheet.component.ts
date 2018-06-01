@@ -15,14 +15,17 @@ import { SchedulingEvent, Answer, MySymbol } from '../../scheduling-event';
   ]
 })
 export class SpreadsheetComponent implements OnInit {
-  
+
   @Input() answerDeadlineExpired$: Observable<boolean>;
   @Input() event$: Observable<SchedulingEvent>;
   @Output() answerIdChange = new EventEmitter<string>();
-  
-  symbols$:           MySymbol[] = this.event$.map( e => e.symbols );
-  answers$:           Answer[]   = this.event$.map( e => e.answers );
-  selectedDatetimes$: Date[]     = this.event$.map( e => e.selectedDatetimes );
+
+  symbols$:           Observable<MySymbol[]>
+    = this.event$.map( e => e.symbols );
+  answers$:           Observable<Answer[]>
+    = this.event$.map( e => e.answers );
+  selectedDatetimes$: Observable<Date[]>
+    = this.event$.map( e => e.selectedDatetimes );
 
   spreadSheet$: Observable<Object>
       = this.event$.map( event => {
