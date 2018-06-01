@@ -15,7 +15,8 @@ import { EditPasswordDialogComponent } from './edit-password-dialog.component';
 
 @Component({
   selector: 'app-answer-page',
-  templateUrl: './answer-page.component.html',
+  // templateUrl: './answer-page.component.html',
+  template: ``,
   styleUrls: [
     '../../../my-own-library/data-table/data-table.component.css',
     './answer-page.component.css'

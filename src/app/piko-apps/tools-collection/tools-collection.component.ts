@@ -30,7 +30,7 @@ export class ToolsCollectionComponent implements OnInit {
         { routerLink: '/tools-collection/tsv2json',
           inService: true, title: 'CSV to JSON', subtitle: 'テキスト変換(CSV to JSON)' },
         { routerLink: '/tools-collection/json-pretty-print',
-          inService: true, title: 'JSON pretty print', subtitle: 'テキスト変換（JSON整形）' },
+          inService: true, title: 'JSON Pretty Print', subtitle: 'テキスト変換（JSON整形）' },
       ] );
   }
 

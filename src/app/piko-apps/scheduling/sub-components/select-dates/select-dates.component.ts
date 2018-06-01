@@ -160,4 +160,14 @@ export class SelectDatesComponent implements OnInit, OnDestroy {
     });
   }
 
+  toHM( date: Date ) {
+    return utils.date.toHM( date );
+  }
+  toYMD( date: Date ) {
+    return utils.date.toYMD( date );
+  }
+  getDayStringEng( date: Date ) {
+    return utils.date.getDayStringEng( date );
+  }
+
 }

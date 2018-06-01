@@ -6,15 +6,15 @@
 </app-multiple-date-picker>
 <div class="margined-element">
   <button mat-raised-button (click)="changeDatetimeAll()">時刻を一括変更</button>
-  （時刻規定値：{{utils.toHM( defaultDatetime )}}）
+  （時刻規定値：{{toHM( defaultDatetime )}}）
 </div>
 <table *ngIf="selectedDatetimesGrouped">
   <tbody>
     <ng-container  *ngFor="let dates of selectedDatetimesGrouped">
       <tr *ngFor="let datetime of dates">
-        <td>{{utils.toYMD( datetime )}}</td>
-        <td>({{utils.getDayStringEng( datetime )}})</td>
-        <td>{{utils.toHM( datetime )}}</td>
+        <td>{{toYMD( datetime )}}</td>
+        <td>({{getDayStringEng( datetime )}})</td>
+        <td>{{toHM( datetime )}}</td>
         <td>
           <button mat-button class="mini-button" (click)="edit( datetime )"
               aria-label="edit-datetime"
