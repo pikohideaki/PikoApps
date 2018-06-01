@@ -20,15 +20,27 @@ export class SpreadsheetComponent implements OnInit {
   @Input() event$: Observable<SchedulingEvent>;
   @Output() answerIdChange = new EventEmitter<string>();
 
-  symbols$:           Observable<MySymbol[]>
-    = this.event$.map( e => e.symbols );
-  answers$:           Observable<Answer[]>
-    = this.event$.map( e => e.answers );
-  selectedDatetimes$: Observable<Date[]>
-    = this.event$.map( e => e.selectedDatetimes );
+  symbols$:           Observable<MySymbol[]>;
+  answers$:           Observable<Answer[]>;
+  selectedDatetimes$: Observable<Date[]>;
+  spreadSheet$: Observable<Object>;
 
-  spreadSheet$: Observable<Object>
-      = this.event$.map( event => {
+
+  flipTableState: boolean = true;
+
+
+  constructor(
+    private dialog: MatDialog,
+  ) {
+  }
+
+  ngOnInit() {
+    this.symbols$ = this.event$.map( e => e.symbols );
+    this.answers$ = this.event$.map( e => e.answers );
+    this.selectedDatetimes$
+      = this.event$.map( e => e.selectedDatetimes );
+
+    this.spreadSheet$ = this.event$.map( event => {
         const symbolIDs = event.symbols.filter( e => e.useThis ).map( e => e.id );
         const dates = event.selectedDatetimes;
         const spreadSheet = {};
@@ -44,16 +56,6 @@ export class SpreadsheetComponent implements OnInit {
           }) );
         return spreadSheet;
       });
-
-  flipTableState: boolean = true;
-
-
-  constructor(
-    private dialog: MatDialog,
-  ) {
-  }
-
-  ngOnInit() {
   }
 
 
@@ -94,13 +96,13 @@ export class SpreadsheetComponent implements OnInit {
     this.answerIdChange.emit( answer.databaseKey );
   }
 
-  toYMD( date: Date ) {
+  toYMD( date: Date ): string {
     return utils.date.toYMD(date);
   }
-  getDayStringJp( date: Date ) {
+  getDayStringJp( date: Date ): string {
     return utils.date.getDayStringJp(date);
   }
-  toHM( date: Date ) {
+  toHM( date: Date ): string {
     return utils.date.toHM(date);
   }
 
