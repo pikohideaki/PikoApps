@@ -15,8 +15,7 @@ import { EditPasswordDialogComponent } from './edit-password-dialog.component';
 
 @Component({
   selector: 'app-answer-page',
-  // templateUrl: './answer-page.component.html',
-  template: ``,
+  templateUrl: './answer-page.component.html',
   styleUrls: [
     '../../../my-own-library/data-table/data-table.component.css',
     './answer-page.component.css'
@@ -55,11 +54,15 @@ export class AnswerPageComponent implements OnInit {
       = Observable.combineLatest(
           this.database.schedulingEvents$,
           this.eventId$,
-          (list, id) => list.find( e => e.databaseKey === id ) );
+          (list, id) => ( list.find( e => e.databaseKey === id )
+                          || new SchedulingEvent() ) );
 
     this.answerDeadlineExpired$
       = this.event$.map( e =>
-          utils.date.compare( new Date(), utils.date.getTomorrow( e.answerDeadline ) ) === 1 );
+          utils.date.compare(
+              new Date(),
+              utils.date.getTomorrow( e.answerDeadline )
+            ) === 1 );
   }
 
 
@@ -84,8 +87,6 @@ export class AnswerPageComponent implements OnInit {
     targetElement.scrollIntoView();
   }
 
-  toYMD( date: Date ) {
-    return utils.date.toYMD(date);
-  }
+  toYMD = utils.date.toYMD;
 
 }

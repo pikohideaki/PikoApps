@@ -13,7 +13,7 @@
     <ng-container  *ngFor="let dates of selectedDatetimesGrouped">
       <tr *ngFor="let datetime of dates">
         <td>{{toYMD( datetime )}}</td>
-        <td>({{getDayStringEng( datetime )}})</td>
+        <td>（{{getDayStringJp( datetime )}}）</td>
         <td>{{toHM( datetime )}}</td>
         <td>
           <button mat-button class="mini-button" (click)="edit( datetime )"

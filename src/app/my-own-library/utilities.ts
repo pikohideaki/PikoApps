@@ -74,7 +74,11 @@ export const utils = {
     map: ( obj: Object, f: (element: any, key?: string, object?: any) => any ) =>
       Object.keys( obj || {} ).map( key => f( obj[key], key, obj ) ),
 
-    entries: ( obj: Object ) => utils.object.map( obj, e => e ),
+    values: ( obj: Object ) =>
+      utils.object.map( obj, e => e ),
+
+    entries: ( obj: Object ) =>
+      utils.object.map( obj, (el, key) => ({ key: key, value: el }) ),
 
     copy: ( obj: Object ) => JSON.parse( JSON.stringify( obj || {} ) ),
 

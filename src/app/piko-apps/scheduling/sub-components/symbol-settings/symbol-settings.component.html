@@ -1,6 +1,7 @@
 記号の定義
 <table class="margined-element">
-  <tr *ngFor="let symbol of defaultSymbols">
+  <!-- <tr *ngFor="let symbol of defaultSymbols"> -->
+  <tr *ngFor="let symbol of symbols">
     <!-- <td> <mat-icon aria-hidden="true">{{symbol.iconName}}</mat-icon> </td> -->
     <td>
       <mat-checkbox
@@ -29,7 +30,7 @@
   </tr>
 </table>
 
-<mat-expansion-panel>
+<!-- <mat-expansion-panel>
   <mat-expansion-panel-header>
     <mat-panel-title>
       記号を追加
@@ -63,4 +64,4 @@
       </td>
     </tr>
   </table>
-</mat-expansion-panel>
+</mat-expansion-panel> -->

@@ -1,78 +1,81 @@
-<!-- <ng-container *ngIf="{
-    myEventId:      myEventId$      | async,
-    myEvent:        myEvent$        | async,
-    myEventEditing: myEventEditing$ | async
+<ng-container *ngIf="{
+    myEventId: myEventId$ | async
   } as data">
 
-<app-waiting-spinner [done]="data.myEvent"></app-waiting-spinner>
+  <app-waiting-spinner [done]="!!data.myEventId"></app-waiting-spinner>
 
-<mat-vertical-stepper *ngIf="data.myEvent" class="default-background-color" >
-  <mat-step label="イベント名を入力">
-    <app-name-and-notes
-      [titleInit$]="title$"
-      [notesInit$]="notes$"
-      (titleChange)="titleChange( $event )"
-      (notesChange)="notesChange( $event )" >
-    </app-name-and-notes>
-    <div class="margined-element">
-      <button mat-raised-button color="primary" matStepperNext>Next</button>
-    </div>
-  </mat-step>
+  <div class="margined-element">
+    <button mat-raised-button
+      [disabled]="!data.myEventId"
+      (click)="exit( data.myEventId )">
+      回答ページに戻る
+    </button>
+  </div>
 
-  <mat-step label="候補日程を選択">
-    <app-select-dates
-      [selectedDatetimesInit$]="selectedDatetimes$"
-      (selectedDatetimesChange)="selectedDatetimesChange( $event )">
-    </app-select-dates>
-    <div class="margined-element">
-      <button mat-raised-button color="primary" matStepperPrevious>Back</button>
-      <button mat-raised-button color="primary" matStepperNext >Next</button>
-    </div>
-  </mat-step>
+  <mat-vertical-stepper *ngIf="!!data.myEventId"
+      class="default-background-color" >
 
-  <mat-step label="回答の設定">
-    <app-answer-deadline
-      [answerDeadlineInit$]="answerDeadline$"
-      (answerDeadlineChange)="answerDeadlineChange( $event )">
-    </app-answer-deadline>
-
-    <hr>
-
-    <app-symbol-settings
-        [symbolsInit$]="symbols$"
-        (symbolsChange)="symbolsChange( $event )">
-    </app-symbol-settings>
-
-    <app-password
-      [passwordInit$]="password$"
-      (passwordChange)="passwordChange( $event )" >
-    </app-password>
-
-    <div class="margined-element">
-      <button mat-raised-button color="primary" matStepperPrevious>Back</button>
-      <button mat-raised-button color="warn"
-          (click)="updateEvent( data.myEventId, data.myEvent )"
-          [disabled]="!data.myEvent.title ||
-                      !data.myEvent.answerDeadline ||
-                       data.myEvent.selectedDatetimes.length === 0" >
-        イベントを更新
-      </button>
-      <button mat-raised-button color="accent"
-          (click)="exit( data.myEventId )">
-        更新せずに回答ページへ戻る
-      </button>
+    <mat-step label="イベント名を入力">
+      <app-name-and-notes
+        [(title)]="myEventEditing.title"
+        [(notes)]="myEventEditing.notes">
+      </app-name-and-notes>
       <div class="margined-element">
-        <p class="error-message" *ngIf="!myEvent.title">
-          イベント名は必須項目です。
-        </p>
-        <p class="error-message" *ngIf="myEvent.selectedDatetimes.length === 0">
-          1つ以上の日程を選択してください。
-        </p>
-        <p class="error-message" *ngIf="!myEvent.answerDeadline">
-          回答期限は必須項目です。
-        </p>
+        <button mat-raised-button color="primary" matStepperNext>Next</button>
       </div>
-    </div>
-  </mat-step>
-</mat-vertical-stepper>
-</ng-container> -->
+    </mat-step>
+
+    <mat-step label="候補日程を選択">
+      <!-- <app-select-dates
+        [selectedDatetimesInit]="myEventEditing.selectedDatetimes"
+        (selectedDatetimesChange)="selectedDatetimesChange( $event )">
+      </app-select-dates> -->
+      <div class="margined-element">
+        <button mat-raised-button color="primary" matStepperPrevious>Back</button>
+        <button mat-raised-button color="primary" matStepperNext >Next</button>
+      </div>
+    </mat-step>
+
+    <mat-step label="回答の設定">
+      <app-answer-deadline
+        [(answerDeadline)]="myEventEditing.answerDeadline">
+      </app-answer-deadline>
+
+      <hr>
+
+      <app-symbol-settings
+        [(symbols)]="myEventEditing.symbols">
+      </app-symbol-settings>
+      <app-password
+        [(password)]="myEventEditing.password"
+        [(enabled)]="passwordEnabled" >
+      </app-password>
+
+      <div class="margined-element">
+        <button mat-raised-button color="primary" matStepperPrevious>Back</button>
+        <button mat-raised-button color="warn"
+            (click)="updateEvent( data.myEventId, myEventEditing )"
+            [disabled]="!myEventEditing.title ||
+                        !myEventEditing.answerDeadline ||
+                         myEventEditing.selectedDatetimes.length === 0" >
+          イベントを更新
+        </button>
+        <button mat-raised-button color="accent"
+            (click)="exit( data.myEventId )">
+          更新せずに回答ページへ戻る
+        </button>
+        <div class="margined-element">
+          <p class="error-message" *ngIf="!myEventEditing.title">
+            イベント名は必須項目です。
+          </p>
+          <p class="error-message" *ngIf="myEventEditing.selectedDatetimes.length === 0">
+            1つ以上の日程を選択してください。
+          </p>
+          <p class="error-message" *ngIf="!myEventEditing.answerDeadline">
+            回答期限は必須項目です。
+          </p>
+        </div>
+      </div>
+    </mat-step>
+  </mat-vertical-stepper>
+</ng-container>

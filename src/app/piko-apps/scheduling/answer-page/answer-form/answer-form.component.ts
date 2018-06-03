@@ -45,12 +45,15 @@ export class AnswerFormComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.allDatesSelected$
-      = this.dateToSymbolId$.map( obj => Object.keys(obj).every( date => obj[date] !== '' ) );
+      = this.dateToSymbolId$.map( obj =>
+            Object.keys(obj).every( date => obj[date] !== '' ) );
 
     const selectedUsersAnswer$: Observable<Answer|undefined>
       = this.answerId$.combineLatest(
             this.event$.map( e => e.answers ),
-            (answerId, answers) => ( answers.find( e => e.databaseKey === answerId ) || new Answer() ) );
+            (answerId, answers) =>
+              ( answers.find( e => e.databaseKey === answerId )
+                  || new Answer() ) );
 
     /* subscriptions */
     this.event$
@@ -79,6 +82,9 @@ export class AnswerFormComponent implements OnInit, OnDestroy {
   }
 
 
+  toYMD          = utils.date.toYMD;
+  getDayStringJp = utils.date.getDayStringJp;
+  toHM           = utils.date.toHM;
 
   userNameOnChange( value: string ) {
     this.userName = value;
@@ -140,16 +146,5 @@ export class AnswerFormComponent implements OnInit, OnDestroy {
       }
     });
   }
-
-  toYMD( date: Date ) {
-    return utils.date.toYMD(date);
-  }
-  getDayStringEng( date: Date ) {
-    return utils.date.getDayStringEng(date);
-  }
-  toHM( date: Date ) {
-    return utils.date.toHM(date);
-  }
-
 
 }

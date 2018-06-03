@@ -2,17 +2,13 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 
-import { utils } from '../../../../my-own-library/utilities';
-import { AlertDialogComponent } from '../../../../my-own-library/alert-dialog.component';
 import { SchedulingEvent, Answer, MySymbol } from '../../scheduling-event';
+import { utils } from '../../../../my-own-library/utilities';
 
 @Component({
   selector: 'app-spreadsheet',
   templateUrl: './spreadsheet.component.html',
-  styleUrls: [
-    '../../../../my-own-library/data-table/data-table.component.css',
-    './spreadsheet.component.css'
-  ]
+  styles: []
 })
 export class SpreadsheetComponent implements OnInit {
 
@@ -23,10 +19,9 @@ export class SpreadsheetComponent implements OnInit {
   symbols$:           Observable<MySymbol[]>;
   answers$:           Observable<Answer[]>;
   selectedDatetimes$: Observable<Date[]>;
-  spreadSheet$: Observable<Object>;
+  spreadSheet$:       Observable<Object>;
 
-
-  flipTableState: boolean = true;
+  flipTableState: boolean = true;  // date-user <--> user-date
 
 
   constructor(
@@ -36,7 +31,9 @@ export class SpreadsheetComponent implements OnInit {
 
   ngOnInit() {
     this.symbols$ = this.event$.map( e => e.symbols );
+
     this.answers$ = this.event$.map( e => e.answers );
+
     this.selectedDatetimes$
       = this.event$.map( e => e.selectedDatetimes );
 
@@ -58,52 +55,8 @@ export class SpreadsheetComponent implements OnInit {
       });
   }
 
-
-  flipTable() {
-    this.flipTableState = !this.flipTableState;
-  }
-
-
-  /* for print */
-  getAverageScore( event: SchedulingEvent, date: Date ) {
-    const symbolIdsOfDate
-      = event.answers
-          .map( ans => ans.selection )
-          .map( selections => selections.find( e => e.date.valueOf() === date.valueOf() ) )
-          .filter( e => e !== undefined )
-          .map( e => e.symbolID );
-    const scores = symbolIdsOfDate.map( id =>
-        (event.symbols.find( e => e.id === id ) || new MySymbol() ).score );
-    return utils.number.roundAt( utils.array.average( scores ), 3 );
-  }
-
-  /* for print */
-  getIconNameOfAnswer( answer: Answer, date: Date, symbols: MySymbol[] ): string {
-    const selection = answer.selection.find( e => e.date.valueOf() === date.valueOf() );
-    if ( !selection ) return '';
-    const symbol = symbols.find( e => e.id === selection.symbolID );
-    return ( !!symbol ? symbol.iconName : '' );
-  }
-
-
-  commentOnClick( comment: string ) {
-    const dialogRef = this.dialog.open( AlertDialogComponent );
-    dialogRef.componentInstance.message = comment;
-  }
-
-
-  userClicked( answer: Answer ) {
+  answerOnSelect( answer: Answer ) {
     this.answerIdChange.emit( answer.databaseKey );
-  }
-
-  toYMD( date: Date ): string {
-    return utils.date.toYMD(date);
-  }
-  getDayStringJp( date: Date ): string {
-    return utils.date.getDayStringJp(date);
-  }
-  toHM( date: Date ): string {
-    return utils.date.toHM(date);
   }
 
 }

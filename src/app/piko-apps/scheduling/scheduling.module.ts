@@ -9,19 +9,20 @@ import { MyOwnCustomMaterialModule } from '../../my-own-custom-material.module';
 import { MyOwnLibraryModule } from '../../my-own-library/my-own-library.module';
 
 import { SchedulingComponent } from './scheduling.component';
-import { SetTimeDialogComponent } from './sub-components/select-dates/set-time-dialog.component';
 import { AnswerPageComponent } from './answer-page/answer-page.component';
-import { NameAndNotesComponent } from './sub-components/name-and-notes/name-and-notes.component';
-import { SelectDatesComponent } from './sub-components/select-dates/select-dates.component';
-import { AnswerDeadlineComponent } from './sub-components/answer-deadline/answer-deadline.component';
-import { SymbolSettingsComponent } from './sub-components/symbol-settings/symbol-settings.component';
 import { EditEventComponent } from './edit-event/edit-event.component';
 import { SpreadsheetComponent } from './answer-page/spreadsheet/spreadsheet.component';
 import { AnswerFormComponent } from './answer-page/answer-form/answer-form.component';
-import { PasswordComponent } from './sub-components/password/password.component';
 import { EditPasswordDialogComponent } from './answer-page/edit-password-dialog.component';
 import { DateUserTableComponent } from './answer-page/spreadsheet/date-user-table/date-user-table.component';
 import { UserDateTableComponent } from './answer-page/spreadsheet/user-date-table/user-date-table.component';
+
+import { AnswerDeadlineComponent } from './sub-components/answer-deadline.component';
+import { NameAndNotesComponent } from './sub-components/name-and-notes.component';
+import { PasswordComponent } from './sub-components/password.component';
+import { SetTimeDialogComponent } from './sub-components/select-dates/set-time-dialog.component';
+import { SelectDatesComponent } from './sub-components/select-dates/select-dates.component';
+import { SymbolSettingsComponent } from './sub-components/symbol-settings/symbol-settings.component';
 
 
 @NgModule({

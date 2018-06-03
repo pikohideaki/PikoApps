@@ -16,7 +16,7 @@ export class SchedulingEvent {
       selectedDatetimesTimeStamps: number[],
       answerDeadlineTimeStamp:     number,
       symbols:                     MySymbol[],
-      answers:                     Answer[],
+      answers:                     Object,
       password:                    string,
   }) {
     this.databaseKey = ( databaseKey || '' );
@@ -24,10 +24,12 @@ export class SchedulingEvent {
     if ( !initObj ) return;
     this.title = ( initObj.title || '' );
     this.notes = ( initObj.notes || '' );
-    this.selectedDatetimes = (initObj.selectedDatetimesTimeStamps || []).map( e => new Date( e || 0 ) );
+    this.selectedDatetimes = ( initObj.selectedDatetimesTimeStamps || [] )
+                                .map( e => new Date( e || 0 ) );
     this.answerDeadline = new Date( initObj.answerDeadlineTimeStamp || 0 );
     this.symbols = ( initObj.symbols || [] );
-    this.answers = ( utils.object.entries( initObj.answers ).map( e => new Answer( e.key, e.value ) ) || [] );
+    this.answers = ( utils.object.entries( initObj.answers )
+                      .map( e => new Answer( e.key, e.value ) ) || [] );
     this.password = ( initObj.password || '' );
   }
 }

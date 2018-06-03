@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatStepper, MatDialog } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/from';
@@ -14,20 +14,18 @@ import { SchedulingEvent, MySymbol } from './scheduling-event';
   templateUrl: './scheduling.component.html',
   styleUrls: ['./scheduling.component.css']
 })
-export class SchedulingComponent implements OnInit, OnDestroy {
-  private alive = true;
+export class SchedulingComponent implements OnInit {
 
-  symbols$: Observable<MySymbol[]> = Observable.from([
-      [
-        { id: 'fav',      useThis: false, score: 10, iconName: 'favorite',               description: 'できればこの日で' },
-        { id: 'ok',       useThis: true,  score: 10, iconName: 'radio_button_unchecked', description: '参加可能' },
-        { id: 'maybe',    useThis: true,  score:  5, iconName: 'change_history',         description: '行けるかも' },
-        { id: 'depends',  useThis: false, score:  5, iconName: 'watch',                  description: '時間によります' },
-        { id: 'late',     useThis: false, score:  5, iconName: 'schedule',               description: '遅れてなら参加可能' },
-        { id: 'unknown',  useThis: false, score:  5, iconName: 'help_outline',           description: '分からない' },
-        { id: 'ng',       useThis: true,  score:  0, iconName: 'clear',                  description: '参加不可' },
-        { id: 'kusonemi', useThis: false, score:  0, iconName: 'hotel',                  description: '起きられません' },
-      ]] );
+  symbolsInit: MySymbol[] = [
+    { id: 'fav',      useThis: false, score: 10, iconName: 'favorite',               description: 'できればこの日で' },
+    { id: 'ok',       useThis: true,  score: 10, iconName: 'radio_button_unchecked', description: '参加可能' },
+    { id: 'maybe',    useThis: true,  score:  5, iconName: 'change_history',         description: '行けるかも' },
+    { id: 'depends',  useThis: false, score:  5, iconName: 'watch',                  description: '時間によります' },
+    { id: 'late',     useThis: false, score:  5, iconName: 'schedule',               description: '遅れてなら参加可能' },
+    { id: 'unknown',  useThis: false, score:  5, iconName: 'help_outline',           description: '分からない' },
+    { id: 'ng',       useThis: true,  score:  0, iconName: 'clear',                  description: '参加不可' },
+    { id: 'kusonemi', useThis: false, score:  0, iconName: 'hotel',                  description: '起きられません' },
+  ];
 
   newEvent = new SchedulingEvent();
 
@@ -35,6 +33,8 @@ export class SchedulingComponent implements OnInit, OnDestroy {
   eventPageId = '';
 
   linkTitle: string = '日程調整';
+
+  symbols: MySymbol;
 
 
   constructor(
@@ -46,14 +46,7 @@ export class SchedulingComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.newEvent.answerDeadline = undefined;  /* reset */
     this.eventPageUrlPrefix = window.location.href + '/answer/';
-
-    this.symbols$
-      .takeWhile( () => this.alive )
-      .subscribe( val => this.newEvent.symbols = val );
-  }
-
-  ngOnDestroy() {
-    this.alive = false;
+    this.newEvent.symbols = this.symbolsInit;
   }
 
 

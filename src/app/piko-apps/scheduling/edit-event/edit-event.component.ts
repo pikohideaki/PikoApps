@@ -27,20 +27,16 @@ export class EditEventComponent implements OnInit {
     = this.route.paramMap
         .switchMap( (params: ParamMap) => params.getAll('eventId') );
 
-  myEvent$: Observable<SchedulingEvent>
+  private myEvent$: Observable<SchedulingEvent>
     = this.myEventId$.combineLatest(
         this.database.schedulingEvents$,
-        (eventId, list) => list.find( e => e.databaseKey === eventId ) || new SchedulingEvent() );
+        (id, list) => list.find( e => e.databaseKey === id ) || new SchedulingEvent() );
 
-  myEventInit$: Observable<SchedulingEvent>
-    = this.myEvent$.first();
+  myEventEditing: SchedulingEvent = new SchedulingEvent();
 
-  private myEventEditingSource
-    = new BehaviorSubject<SchedulingEvent>( new SchedulingEvent() );
-  myEventEditing$
-    = Observable.combineLatest(
-        this.myEventInit$,
-        this.myEventEditingSource.asObservable().skip(1) );
+  passwordEnabled: boolean = false;
+
+
 
 
   constructor(
@@ -52,40 +48,33 @@ export class EditEventComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.myEvent$.first().subscribe( myEventInit => {
+      console.log(myEventInit);
+
+      this.myEventEditing = myEventInit;
+    });
   }
 
 
   /* callback functions */
-  titleChange( title: string ) {
-    const curr = this.myEventEditingSource.getValue();
-    curr.title = title;
-    this.myEventEditingSource.next( curr );
-  }
-  notesChange( notes: string ) {
-    const curr = this.myEventEditingSource.getValue();
-    curr.notes = notes;
-    this.myEventEditingSource.next( curr );
-  }
-  selectedDatetimesChange( selectedDatetimes: Date[] ) {
-    const curr = this.myEventEditingSource.getValue();
-    curr.selectedDatetimes = selectedDatetimes;
-    this.myEventEditingSource.next( curr );
-  }
-  answerDeadlineChange( answerDeadline: Date ) {
-    const curr = this.myEventEditingSource.getValue();
-    curr.answerDeadline = answerDeadline;
-    this.myEventEditingSource.next( curr );
-  }
-  symbolsChange( symbols: MySymbol[] ) {
-    const curr = this.myEventEditingSource.getValue();
-    curr.symbols = symbols;
-    this.myEventEditingSource.next( curr );
-  }
-  passwordChange( password: string ) {
-    const curr = this.myEventEditingSource.getValue();
-    curr.password = password;
-    this.myEventEditingSource.next( curr );
-  }
+  // titleChange( title: string ) {
+  //   this.myEventEditing.title = title;
+  // }
+  // notesChange( notes: string ) {
+  //   this.myEventEditing.notes = notes;
+  // }
+  // selectedDatetimesChange( selectedDatetimes: Date[] ) {
+  //   this.myEventEditing.selectedDatetimes = selectedDatetimes;
+  // }
+  // answerDeadlineChange( answerDeadline: Date ) {
+  //   this.myEventEditing.answerDeadline = answerDeadline;
+  // }
+  // symbolsChange( symbols: MySymbol[] ) {
+  //   this.myEventEditing.symbols = symbols;
+  // }
+  // passwordChange( password: string ) {
+  //   this.myEventEditing.password = password;
+  // }
 
 
   exit( myEventId: string ) {

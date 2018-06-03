@@ -1,67 +1,81 @@
-<!-- <table
-    class="data-table  data-table--shadow3px  no-hover-effect  data-table--vertical-line">
-  <thead>
-    <tr>
-      <th>日程 <button mat-button (click)="flipTable()">行列入れ替え</button></th>
-      <th>スコア</th>
-      <ng-container *ngFor="let symbol of data.symbols">
-        <th *ngIf="symbol.useThis">
-          <mat-icon aria-hidden="true" [title]="symbol.description">
-            {{symbol.iconName}}
-          </mat-icon>
-        </th>
-      </ng-container>
-      <th *ngFor="let answer of data.answers">
-        <span *ngIf="data.answerDeadlineExpired; then thenBlock; else elseBlock"></span>
-        <ng-template #thenBlock>
-          {{answer.userName}}
-        </ng-template>
-        <ng-template #elseBlock>
-          <button mat-button class="mini-button" (click)="userClicked( answer )">
-            {{answer.userName}}
-          </button>
-        </ng-template>
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let datetime of data.event.selectedDatetimes"
-        [class.dateIsGood]="7 <= getAverageScore( data.event, datetime )
-                              && getAverageScore( data.event, datetime ) < 10"
-        [class.dateIsPerfect]="getAverageScore( data.event, datetime ) === 10" >
-      <th>
-        {{toYMD( datetime )}}
-        （{{getDayStringJp( datetime )}}）
-        {{toHM( datetime )}}
-      </th>
-      <th>{{getAverageScore( data.event, datetime )}}</th>
-      <ng-container *ngFor="let symbol of data.symbols">
-        <td *ngIf="symbol.useThis">
-          {{data.spreadSheet[ datetime.valueOf() ][ symbol.id ]}}
-          <span class="small-font">人</span>
-        </td>
-      </ng-container>
-      <td *ngFor="let answer of data.answers">
-        <mat-icon>
-          {{getIconNameOfAnswer( answer, datetime, data.symbols )}}
-        </mat-icon>
-      </td>
-    </tr>
-    <tr>
-      <th>コメント</th>
-      <th><!-- score average -></th>
-      <ng-container *ngFor="let symbol of data.symbols">
-        <td *ngIf="symbol.useThis"></td>
-      </ng-container>
-      <td *ngFor="let answer of data.answers">
-        <button mat-icon-button
-            title="コメントあり"
-            (click)="commentOnClick( answer.comment )">
-          <mat-icon aria-hidden="true" *ngIf="!!answer.comment">
-            comment
-          </mat-icon>
-        </button>
-      </td>
-    </tr>
-  </tbody>
-</table> -->
+<ng-container *ngIf="{
+    answerDeadlineExpired : answerDeadlineExpired$ | async,
+    answers               : answers$               | async,
+    event                 : event$                 | async,
+    spreadSheet           : spreadSheet$           | async,
+    symbols               : symbols$               | async
+  } as data">
+
+  <ng-container *ngIf="!!data.event && !!data.spreadSheet">
+    <div class="margined-element">
+      <button mat-raised-button (click)="flipTable()">行列入れ替え</button>
+    </div>
+    <table
+        class="data-table  data-table--shadow3px  no-hover-effect  data-table--vertical-line">
+      <thead>
+        <tr>
+          <th>日程</th>
+          <th>スコア</th>
+          <ng-container *ngFor="let symbol of data.symbols">
+            <th *ngIf="symbol.useThis">
+              <mat-icon aria-hidden="true" [title]="symbol.description">
+                {{symbol.iconName}}
+              </mat-icon>
+            </th>
+          </ng-container>
+          <th *ngFor="let answer of data.answers">
+            <span *ngIf="data.answerDeadlineExpired; then thenBlock; else elseBlock"></span>
+            <ng-template #thenBlock>
+              {{answer.userName}}
+            </ng-template>
+            <ng-template #elseBlock>
+              <button mat-button class="mini-button" (click)="answerOnSelect( answer )">
+                {{answer.userName}}
+              </button>
+            </ng-template>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let datetime of data.event.selectedDatetimes"
+            [class.dateIsGood]="7 <= average( data.event, datetime )
+                                  && average( data.event, datetime ) < 10"
+            [class.dateIsPerfect]="average( data.event, datetime ) === 10" >
+          <th>
+            {{toYMD( datetime )}}
+            （{{getDayStringJp( datetime )}}）
+            {{toHM( datetime )}}
+          </th>
+          <th>{{average( data.event, datetime )}}</th>
+          <ng-container *ngFor="let symbol of data.symbols">
+            <td *ngIf="symbol.useThis">
+              {{data.spreadSheet[ datetime.valueOf() ][ symbol.id ]}}
+              <span class="small-font">人</span>
+            </td>
+          </ng-container>
+          <td *ngFor="let answer of data.answers">
+            <mat-icon>
+              {{iconName( answer, datetime, data.symbols )}}
+            </mat-icon>
+          </td>
+        </tr>
+        <tr>
+          <th>コメント</th>
+          <th></th>
+          <ng-container *ngFor="let symbol of data.symbols">
+            <td *ngIf="symbol.useThis"></td>
+          </ng-container>
+          <td *ngFor="let answer of data.answers">
+            <button mat-icon-button
+                title="コメントあり"
+                (click)="commentOnClick( answer.comment )">
+              <mat-icon aria-hidden="true" *ngIf="!!answer.comment">
+                comment
+              </mat-icon>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </ng-container>
+</ng-container>

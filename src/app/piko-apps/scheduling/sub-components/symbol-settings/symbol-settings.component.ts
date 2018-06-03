@@ -11,23 +11,20 @@ import { MySymbol } from '../../scheduling-event';
 })
 export class SymbolSettingsComponent implements OnInit {
 
-  @Input()  private symbolsInit$: Observable<MySymbol[]> = Observable.from([]);
-  symbols: MySymbol[];
+  @Input() symbols: MySymbol[] = [];
   @Output() symbolsChange = new EventEmitter<MySymbol[]>();
 
-  defaultSymbols:  MySymbol[] = [];
-  optionalSymbols: MySymbol[] = [];
+  // defaultSymbols:  MySymbol[] = [];
+  // optionalSymbols: MySymbol[] = [];
 
 
 
   constructor() { }
 
   ngOnInit() {
-    this.symbolsInit$.subscribe( val => {
-      this.symbols = val;
-      this.defaultSymbols  = this.symbols.filter( e =>  e.id.match(/^(ok|maybe|ng)$/) );
-      this.optionalSymbols = this.symbols.filter( e => !e.id.match(/^(ok|maybe|ng)$/) );
-    } );
+    console.log( this.symbols );
+    // this.defaultSymbols  = this.symbols.filter( e =>  e.id.match(/^(ok|maybe|ng)$/) );
+    // this.optionalSymbols = this.symbols.filter( e => !e.id.match(/^(ok|maybe|ng)$/) );
   }
 
 

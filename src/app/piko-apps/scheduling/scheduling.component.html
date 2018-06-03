@@ -27,8 +27,7 @@
     <hr>
 
     <app-symbol-settings
-        [symbolsInit$]="symbols$"
-        (symbolsChange)="symbolsChange( $event )">
+      [(symbols)]="symbols">
     </app-symbol-settings>
     <app-password
       (passwordChange)="passwordChange( $event )" >

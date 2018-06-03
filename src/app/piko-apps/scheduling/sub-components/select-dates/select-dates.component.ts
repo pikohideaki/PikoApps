@@ -16,12 +16,14 @@ import { SetTimeDialogComponent } from './set-time-dialog.component';
 export class SelectDatesComponent implements OnInit, OnDestroy {
   private alive = true;
 
-  defaultDatetime = new Date( ( new Date() ).setHours(19, 0, 0, 0) );  // 19:00 by default
-
-  @Input() selectedDatetimesInit$: Observable<Date[]> = Observable.of([]);
-  selectedDatesInit$: Observable<Date[]>;
+  @Input() selectedDatetimesInit: Date[] = [];
 
   @Output() selectedDatetimesChange = new EventEmitter<Date[]>();
+
+  defaultDatetime = new Date( ( new Date() ).setHours(19, 0, 0, 0) );  // 19:00 by default
+
+  selectedDatesInit$: Observable<Date[]>;
+
 
   private selectedDatesSource = new BehaviorSubject<Date[]>([]);
 
@@ -49,53 +51,53 @@ export class SelectDatesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.selectedDatesInit$
-      = this.selectedDatetimesInit$
-          .map( selectedDatetimesInit =>
-            utils.array.uniq(
-              selectedDatetimesInit
-                .map( e => utils.date.toMidnight(e) )
-                .map( e => e.valueOf() ) ) );
+    // this.selectedDatesInit$
+    //   = this.selectedDatetimesInit$
+    //       .map( selectedDatetimesInit =>
+    //         utils.array.uniq(
+    //           selectedDatetimesInit
+    //             .map( e => utils.date.toMidnight(e) )
+    //             .map( e => e.valueOf() ) ) );
 
-    this.selectedDatetimesInit$.subscribe( selectedDatetimesInit => {
-      selectedDatetimesInit.forEach( date => {
-        const date0 = utils.date.toMidnight(date).valueOf();
-        if ( this.dateToTime.has( date0 ) ) {
-          this.dateToTime.get( date0 ).push( date );
-        } else {
-          this.dateToTime.set( date0, [date] );
-        }
-      });
-      this.dateToTimeChangedSource.next(0);
-    });
+    // this.selectedDatetimesInit$.subscribe( selectedDatetimesInit => {
+    //   selectedDatetimesInit.forEach( date => {
+    //     const date0 = utils.date.toMidnight(date).valueOf();
+    //     if ( this.dateToTime.has( date0 ) ) {
+    //       this.dateToTime.get( date0 ).push( date );
+    //     } else {
+    //       this.dateToTime.set( date0, [date] );
+    //     }
+    //   });
+    //   this.dateToTimeChangedSource.next(0);
+    // });
 
-    const selectedDatetimesGrouped$
-      = Observable.combineLatest(
-          this.selectedDatesSource.asObservable(),
-          this.dateToTimeChangedSource.asObservable(),
-          (selectedDates) => selectedDates.map( date => {
-            if ( !this.dateToTime.has( date.valueOf() ) ) {
-              const dateWithDefaultTime = new Date(date);
-              dateWithDefaultTime.setHours  ( this.defaultDatetime.getHours()   );
-              dateWithDefaultTime.setMinutes( this.defaultDatetime.getMinutes() );
-              this.dateToTime.set( date.valueOf(), [dateWithDefaultTime] );
-            }
-            return this.dateToTime.get( date.valueOf() ).sort( utils.date.compare );
-          } ) );
+    // const selectedDatetimesGrouped$
+    //   = Observable.combineLatest(
+    //       this.selectedDatesSource.asObservable(),
+    //       this.dateToTimeChangedSource.asObservable(),
+    //       (selectedDates) => selectedDates.map( date => {
+    //         if ( !this.dateToTime.has( date.valueOf() ) ) {
+    //           const dateWithDefaultTime = new Date(date);
+    //           dateWithDefaultTime.setHours  ( this.defaultDatetime.getHours()   );
+    //           dateWithDefaultTime.setMinutes( this.defaultDatetime.getMinutes() );
+    //           this.dateToTime.set( date.valueOf(), [dateWithDefaultTime] );
+    //         }
+    //         return this.dateToTime.get( date.valueOf() ).sort( utils.date.compare );
+    //       } ) );
 
-    const selectedDatetimes$
-      = selectedDatetimesGrouped$.map( e => [].concat( ...e ) );
+    // const selectedDatetimes$
+    //   = selectedDatetimesGrouped$.map( e => [].concat( ...e ) );
 
-    selectedDatetimesGrouped$
-      .takeWhile( () => this.alive )
-      .subscribe( val => this.selectedDatetimesGrouped = val );
+    // selectedDatetimesGrouped$
+    //   .takeWhile( () => this.alive )
+    //   .subscribe( val => this.selectedDatetimesGrouped = val );
 
-    selectedDatetimes$
-      .takeWhile( () => this.alive )
-      .subscribe( val => {
-        this.selectedDatetimes = val;
-        this.selectedDatetimesChange.emit( this.selectedDatetimes );
-      });
+    // selectedDatetimes$
+    //   .takeWhile( () => this.alive )
+    //   .subscribe( val => {
+    //     this.selectedDatetimes = val;
+    //     this.selectedDatetimesChange.emit( this.selectedDatetimes );
+    //   });
   }
 
   ngOnDestroy() {
@@ -160,14 +162,8 @@ export class SelectDatesComponent implements OnInit, OnDestroy {
     });
   }
 
-  toHM( date: Date ) {
-    return utils.date.toHM( date );
-  }
-  toYMD( date: Date ) {
-    return utils.date.toYMD( date );
-  }
-  getDayStringEng( date: Date ) {
-    return utils.date.getDayStringEng( date );
-  }
+  toHM           = utils.date.toHM;
+  toYMD          = utils.date.toYMD;
+  getDayStringJp = utils.date.getDayStringJp;
 
 }
