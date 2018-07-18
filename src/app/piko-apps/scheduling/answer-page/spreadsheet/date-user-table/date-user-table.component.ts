@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { MatDialog } from '@angular/material';
 
 import { AlertDialogComponent } from '../../../../../my-own-library/alert-dialog.component';

@@ -1,5 +1,7 @@
+
+import {map} from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { UserService } from '../../firebase-mediator/user.service';
 
@@ -26,12 +28,12 @@ export class ToolsCollectionComponent implements OnInit {
   constructor(
     private user: UserService
   ) {
-    this.apps$ = this.user.signedIn$.map( signedIn => [
+    this.apps$ = this.user.signedIn$.pipe(map( signedIn => [
         { routerLink: '/tools-collection/tsv2json',
           inService: true, title: 'CSV to JSON', subtitle: 'テキスト変換(CSV to JSON)' },
         { routerLink: '/tools-collection/json-pretty-print',
           inService: true, title: 'JSON Pretty Print', subtitle: 'テキスト変換（JSON整形）' },
-      ] );
+      ] ));
   }
 
   ngOnInit() {

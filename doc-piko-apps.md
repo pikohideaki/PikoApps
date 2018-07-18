@@ -19,4 +19,10 @@
 * symbolidは型チェックさせる ( symbol-settings.ts )
 * "event", "myEvent" 統一．`event$` と紛らわしいからmyEventにする？
 * InputはObservableに統一する？
+  * ObservableInputの自前実装を調べる
+* edit-eventはただの変数で実装する
+
+* 改修工事中
+  * select-dates.component
+  * edit-event.component
 

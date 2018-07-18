@@ -26,10 +26,9 @@
     </mat-step>
 
     <mat-step label="候補日程を選択">
-      <!-- <app-select-dates
-        [selectedDatetimesInit]="myEventEditing.selectedDatetimes"
-        (selectedDatetimesChange)="selectedDatetimesChange( $event )">
-      </app-select-dates> -->
+      <app-select-dates
+        [(selectedDatetimes)]="myEventEditing.selectedDatetimes">
+      </app-select-dates>
       <div class="margined-element">
         <button mat-raised-button color="primary" matStepperPrevious>Back</button>
         <button mat-raised-button color="primary" matStepperNext >Next</button>

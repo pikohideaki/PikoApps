@@ -1,5 +1,7 @@
+
+import {map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { AngularFirestore    } from 'angularfire2/firestore';
 import { AngularFireDatabase } from 'angularfire2/database';
@@ -52,19 +54,19 @@ export class CloudFirestoreMediatorService {
     private afdb: AngularFireDatabase,
   ) {
     this.users$
-      = this.afdb.list( this.fdPath.users, ref => ref.orderByChild('name_yomi') ).snapshotChanges()
-          .map( actions => actions.map( action => new User( action.key, action.payload.val() ) ) );
+      = this.afdb.list( this.fdPath.users, ref => ref.orderByChild('name_yomi') ).snapshotChanges().pipe(
+          map( actions => actions.map( action => new User( action.key, action.payload.val() ) ) ));
           // .do( val => console.log( 'users$ changed', JSON.stringify(val), val ) );
 
 
     this.schedulingEvents$
-      = this.afdb.list( this.fdPath.schedulingEvents ).snapshotChanges()
-          .map( actions => actions.map( action => new SchedulingEvent( action.key, action.payload.val() ) ) );
+      = this.afdb.list( this.fdPath.schedulingEvents ).snapshotChanges().pipe(
+          map( actions => actions.map( action => new SchedulingEvent( action.key, action.payload.val() ) ) ));
           // .do( val => console.log( 'schedulingEvents$ changed', JSON.stringify(val), val ) );
 
     this.feedbacks$
-      = this.afdb.list( this.fdPath.feedbacks ).snapshotChanges()
-          .map( actions => actions.map( action => new Feedback( action.key, action.payload.val() ) ) );
+      = this.afdb.list( this.fdPath.feedbacks ).snapshotChanges().pipe(
+          map( actions => actions.map( action => new Feedback( action.key, action.payload.val() ) ) ));
           // .do( val => console.log( 'feedbacks$ changed', JSON.stringify(val), val ) );
 
 

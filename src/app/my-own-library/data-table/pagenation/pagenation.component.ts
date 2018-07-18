@@ -1,5 +1,8 @@
+
+import {combineLatest as observableCombineLatest,  Observable } from 'rxjs';
+
+import {map} from 'rxjs/operators';
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
 
 import { utils } from '../../utilities';
 
@@ -28,21 +31,21 @@ export class PagenationComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.pageLength$ = Observable.combineLatest(
+    this.pageLength$ = observableCombineLatest(
         this.itemsPerPage$,
         this.dataSize$,
         (itemsPerPage, dataSize) => Math.ceil( dataSize / itemsPerPage ) );
 
     this.pageIndice$
-      = this.pageLength$.map( len => utils.number.seq0( len ) );
+      = this.pageLength$.pipe(map( len => utils.number.seq0( len ) ));
 
-    this.rangeStart$ = Observable.combineLatest(
+    this.rangeStart$ = observableCombineLatest(
         this.itemsPerPage$,
         this.selectedPageIndex$,
         (itemsPerPage, selectedPageIndex) =>
           itemsPerPage * selectedPageIndex + 1 );
 
-    this.rangeEnd$ = Observable.combineLatest(
+    this.rangeEnd$ = observableCombineLatest(
         this.itemsPerPage$,
         this.selectedPageIndex$,
         this.dataSize$,

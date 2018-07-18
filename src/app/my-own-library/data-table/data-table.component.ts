@@ -1,10 +1,11 @@
+
+import {combineLatest as observableCombineLatest,  Observable ,  BehaviorSubject } from 'rxjs';
+
+import {withLatestFrom, takeWhile, map, debounceTime} from 'rxjs/operators';
 import { Component, OnInit, OnDestroy, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
 
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/observable/combineLatest';
-import 'rxjs/add/operator/takeWhile';
+
+
 
 import { utils } from '../utilities';
 
@@ -34,7 +35,7 @@ export class DataTableComponent implements OnInit, OnDestroy {
 
   @Input() private columnStates: ColumnState[] = [];  // initializer
   private columnStatesSource = new BehaviorSubject<ColumnState[]>([]);
-  columnStates$ = this.columnStatesSource.asObservable().debounceTime( 300 /* ms */ );
+  columnStates$ = this.columnStatesSource.asObservable().pipe(debounceTime( 300 /* ms */ ));
 
 
   // pagenation
@@ -68,7 +69,7 @@ export class DataTableComponent implements OnInit, OnDestroy {
     this.itemsPerPageSource.next( this.itemsPerPageInit );  // initialize
 
     this.filteredIndice$
-      = Observable.combineLatest(
+      = observableCombineLatest(
             this.data$,
             this.columnStates$,
             (data, columnStates) =>
@@ -77,14 +78,14 @@ export class DataTableComponent implements OnInit, OnDestroy {
                   .map( e => e.idx ) );
 
     this.filteredData$
-      = this.filteredIndice$.withLatestFrom(
+      = this.filteredIndice$.pipe(withLatestFrom(
             this.data$,
-            (indice, data) => indice.map( idx => data[idx] ) );
+            (indice, data) => indice.map( idx => data[idx] ) ));
 
-    this.filteredDataLength$ = this.filteredData$.map( e => e.length );
+    this.filteredDataLength$ = this.filteredData$.pipe(map( e => e.length ));
 
     this.pagenatedData$
-      = Observable.combineLatest(
+      = observableCombineLatest(
             this.filteredData$,
             this.itemsPerPage$,
             this.selectedPageIndex$,
@@ -95,7 +96,7 @@ export class DataTableComponent implements OnInit, OnDestroy {
                   selectedPageIndex ) );
 
     this.transformedPagenatedData$
-      = this.pagenatedData$.map( data => data.map( line => {
+      = this.pagenatedData$.pipe(map( data => data.map( line => {
           const transformed = {};
           Object.keys( line ).forEach( key => {
             if ( Array.isArray( line[key] ) ) {
@@ -105,23 +106,23 @@ export class DataTableComponent implements OnInit, OnDestroy {
             }
           });
           return transformed;
-        }) );
+        }) ));
 
 
     /* subscriptions */
-    this.filteredIndice$
-      .takeWhile( () => this.alive )
+    this.filteredIndice$.pipe(
+      takeWhile( () => this.alive ))
       .subscribe( val => {
         this.selectedPageIndexSource.next(0);
         this.filteredIndiceOnChange.emit( val );
       });
 
-    this.filteredData$
-      .takeWhile( () => this.alive )
+    this.filteredData$.pipe(
+      takeWhile( () => this.alive ))
       .subscribe( val => this.filteredDataOnChange.emit( val ) );
 
-    this.filteredData$.withLatestFrom( this.data$ )
-      .takeWhile( () => this.alive )
+    this.filteredData$.pipe(withLatestFrom( this.data$ ),
+      takeWhile( () => this.alive ),)
       .subscribe( ([filteredData, data]) => {
         const columnStates = this.columnStatesSource.getValue();
         columnStates.forEach( column => {

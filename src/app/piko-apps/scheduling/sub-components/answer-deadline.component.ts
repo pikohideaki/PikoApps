@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-answer-deadline',
@@ -42,14 +42,13 @@ export class AnswerDeadlineComponent implements OnInit {
   }
 
 
-  answerDeadlineOnInput( value ) {
+  answerDeadlineOnChange( value ) {
     this.answerDeadline = value;
     this.answerDeadlineChange.emit( this.answerDeadline );
   }
 
-  answerDeadlineOnChange( value ) {
-    this.answerDeadline = value;
-    this.answerDeadlineChange.emit( this.answerDeadline );
+  answerDeadlineOnInput( value ) {
+    this.answerDeadlineOnChange( value );
   }
 
 }

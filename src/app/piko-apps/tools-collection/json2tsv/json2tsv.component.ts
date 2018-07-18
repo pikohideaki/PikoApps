@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import 'rxjs/add/operator/debounceTime';
+import { Observable ,  BehaviorSubject } from 'rxjs';
+
 import { utils } from '../../../my-own-library/utilities';
 
 

@@ -1,6 +1,8 @@
+
+import {map} from 'rxjs/operators';
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { SchedulingEvent, Answer, MySymbol } from '../../scheduling-event';
 import { utils } from '../../../../my-own-library/utilities';
@@ -30,14 +32,14 @@ export class SpreadsheetComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.symbols$ = this.event$.map( e => e.symbols );
+    this.symbols$ = this.event$.pipe(map( e => e.symbols ));
 
-    this.answers$ = this.event$.map( e => e.answers );
+    this.answers$ = this.event$.pipe(map( e => e.answers ));
 
     this.selectedDatetimes$
-      = this.event$.map( e => e.selectedDatetimes );
+      = this.event$.pipe(map( e => e.selectedDatetimes ));
 
-    this.spreadSheet$ = this.event$.map( event => {
+    this.spreadSheet$ = this.event$.pipe(map( event => {
         const symbolIDs = event.symbols.filter( e => e.useThis ).map( e => e.id );
         const dates = event.selectedDatetimes;
         const spreadSheet = {};
@@ -52,7 +54,7 @@ export class SpreadsheetComponent implements OnInit {
             }
           }) );
         return spreadSheet;
-      });
+      }));
   }
 
   answerOnSelect( answer: Answer ) {

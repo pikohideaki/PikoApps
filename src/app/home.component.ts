@@ -1,5 +1,7 @@
+
+import {map} from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { UserService } from './firebase-mediator/user.service';
 
@@ -26,11 +28,11 @@ export class HomeComponent implements OnInit {
   constructor(
     private user: UserService
   ) {
-    this.apps$ = this.user.signedIn$.map( signedIn => [
+    this.apps$ = this.user.signedIn$.pipe(map( signedIn => [
         { routerLink: '/scheduling',       inService: true, title: 'Scheduling',       subtitle: '日程調整' },
         { routerLink: '/toybox',           inService: true, title: 'Toy Box',          subtitle: 'おもちゃ' },
         { routerLink: '/tools-collection', inService: true, title: 'Tools Collection', subtitle: 'ツール集' },
-      ] );
+      ] ));
   }
 
   ngOnInit() {

@@ -1,8 +1,9 @@
+
+import {combineLatest as observableCombineLatest,  Observable ,  BehaviorSubject } from 'rxjs';
+
+import {debounceTime, map} from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import 'rxjs/add/operator/debounceTime';
 
 
 @Component({
@@ -34,26 +35,26 @@ export class Tsv2jsonComponent implements OnInit {
 
   constructor() {
     this.tableHeader$
-      = Observable.combineLatest(
+      = observableCombineLatest(
             this.tsvHeaderTextSource.asObservable(),
-            this.separator$ )
-          .map( val => val[0].replace(/\n+$/g, '').split( val[1] ) );  // 末尾の改行は削除
+            this.separator$ ).pipe(
+          map( val => val[0].replace(/\n+$/g, '').split( val[1] ) ));  // 末尾の改行は削除
 
     this.table$
-      = Observable.combineLatest(
+      = observableCombineLatest(
             this.tsvTextSource.asObservable(),
-            this.separator$ )
-          .map( val => {
+            this.separator$ ).pipe(
+          map( val => {
               const lines = val[0].replace(/\n+$/g, '').split('\n');
               return lines.map( line => line.split( val[1] ).map( this.replacer ) );
-          });
+          }));
 
     this.jsonText$
-      = Observable.combineLatest(
+      = observableCombineLatest(
             this.tableHeader$,
-            this.table$ )
-          .debounceTime( 300 /* ms */ )
-          .map( val => this.tsv2json( val[0], val[1] ) );
+            this.table$ ).pipe(
+          debounceTime( 300 /* ms */ ),
+          map( val => this.tsv2json( val[0], val[1] ) ),);
   }
 
   ngOnInit() {

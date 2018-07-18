@@ -1,8 +1,8 @@
+
+import {first} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/first';
+
 import { AngularFireDatabase } from 'angularfire2/database';
-import * as firebase from 'firebase/app';
 
 import { utils } from '../my-own-library/utilities';
 
@@ -30,7 +30,7 @@ export class AutoBackupOnFirebaseService {
   }
 
   private async getLatestBackupDate() {
-    const timeStamp = await this.afdb.object<number>( this.latestBackupDatePath ).valueChanges().first().toPromise();
+    const timeStamp = await this.afdb.object<number>( this.latestBackupDatePath ).valueChanges().pipe(first()).toPromise();
     return new Date( timeStamp );
   }
 
@@ -43,7 +43,7 @@ export class AutoBackupOnFirebaseService {
     Object.keys( this.fdPath ).forEach( key => {
       const sourcePath = this.fdPath[key];
       const distPathPrefix = `${this.autoBackupDir}/index/${dateString}`;
-      this.afdb.object( sourcePath ).valueChanges().first().toPromise()
+      this.afdb.object( sourcePath ).valueChanges().pipe(first()).toPromise()
         .then( val => {
           if ( !val ) return;
           this.afdb.object(`${distPathPrefix}${sourcePath}`).set( val );

@@ -1,6 +1,8 @@
+
+import {combineLatest as observableCombineLatest,  Observable ,  BehaviorSubject } from 'rxjs';
+
+import {distinctUntilChanged, map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { AngularFireAuth } from 'angularfire2/auth';
 
 import { User } from '../classes/user';
@@ -23,17 +25,17 @@ export class UserService {
     private afAuth: AngularFireAuth,
     private database: CloudFirestoreMediatorService,
   ) {
-    this.signedIn$      = this.afAuth.authState.map( user => !!user );
-    this.uid$           = this.afAuth.authState.map( user => ( !user ? '' : user.uid ) );
+    this.signedIn$      = this.afAuth.authState.pipe(map( user => !!user ));
+    this.uid$           = this.afAuth.authState.pipe(map( user => ( !user ? '' : user.uid ) ));
 
-    this.user$ = Observable.combineLatest(
+    this.user$ = observableCombineLatest(
         this.uid$,
         this.database.users$,
         ( uid: string, users: User[] ) =>
           (!uid || users.length === 0) ? new User() : users.find( e => e.databaseKey === uid ) || new User() );
 
-    this.name$      = this.user$.map( e => e.name      ).distinctUntilChanged();
-    this.name_yomi$ = this.user$.map( e => e.name_yomi ).distinctUntilChanged();
+    this.name$      = this.user$.pipe(map( e => e.name      ),distinctUntilChanged(),);
+    this.name_yomi$ = this.user$.pipe(map( e => e.name_yomi ),distinctUntilChanged(),);
 
     this.uid$.subscribe( val => this.uid = val );
   }

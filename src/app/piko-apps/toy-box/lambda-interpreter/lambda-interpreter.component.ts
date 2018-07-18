@@ -1,7 +1,8 @@
+
+import {map, debounceTime} from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import 'rxjs/add/operator/debounceTime';
+import { Observable ,  BehaviorSubject } from 'rxjs';
+
 
 import { LambdaMacroService     } from './lambda-macro.service';
 import { LambdaParserService    } from './lambda-parser.service';
@@ -27,24 +28,24 @@ export class LambdaInterpreterComponent implements OnInit {
 
   private inputSource  = new BehaviorSubject<string>('');
   private input$: Observable<string>
-    = this.inputSource.asObservable().debounceTime( 300 /* ms */ );
+    = this.inputSource.asObservable().pipe(debounceTime( 300 /* ms */ ));
 
   private parseTree$: Observable<undefined|string|any[]>
-    = this.input$.map( input => this.parser.parse( input ) );
+    = this.input$.pipe(map( input => this.parser.parse( input ) ));
   parseTreeToStr$: Observable<string>
-    = this.parseTree$.map( tree => this.print.termToString(tree) );
+    = this.parseTree$.pipe(map( tree => this.print.termToString(tree) ));
   private evalSequence$: Observable<any[]>
-    = this.parseTree$.map( t => this.evaluator.evalSequence(t) );
+    = this.parseTree$.pipe(map( t => this.evaluator.evalSequence(t) ));
 
   private evalSeqToStr$: Observable<string[]>
-    = this.evalSequence$.map( seq => seq.map( tree => this.print.termToString( tree ) ) );
+    = this.evalSequence$.pipe(map( seq => seq.map( tree => this.print.termToString( tree ) ) ));
   output$: Observable<string>
-    = this.evalSeqToStr$.map( seq => seq.map( (s, i) => `${i}.\t${s}` ).join('\n') );
+    = this.evalSeqToStr$.pipe(map( seq => seq.map( (s, i) => `${i}.\t${s}` ).join('\n') ));
 
   isLambdaTerm$: Observable<boolean>
-    = this.input$
-        .map( input => this.parser.splitToTokens( input ) )
-        .map( tokens => this.parser.isLambdaTerm( tokens ) );
+    = this.input$.pipe(
+        map( input => this.parser.splitToTokens( input ) ),
+        map( tokens => this.parser.isLambdaTerm( tokens ) ),);
 
 
 

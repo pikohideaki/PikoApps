@@ -1,8 +1,10 @@
+
+import {combineLatest as observableCombineLatest,  Observable ,  BehaviorSubject } from 'rxjs';
+
+import {map, switchMap} from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { Title }     from '@angular/platform-browser';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { MatDialog } from '@angular/material';
 
 import { utils } from '../../../my-own-library/utilities';
@@ -47,22 +49,22 @@ export class AnswerPageComponent implements OnInit {
     this.titleService.setTitle('日程調整');
 
     this.eventId$
-      = this.route.paramMap
-          .switchMap( (params: ParamMap) => params.getAll('eventId') );
+      = this.route.paramMap.pipe(
+          switchMap( (params: ParamMap) => params.getAll('eventId') ));
 
     this.event$
-      = Observable.combineLatest(
+      = observableCombineLatest(
           this.database.schedulingEvents$,
           this.eventId$,
           (list, id) => ( list.find( e => e.databaseKey === id )
                           || new SchedulingEvent() ) );
 
     this.answerDeadlineExpired$
-      = this.event$.map( e =>
+      = this.event$.pipe(map( e =>
           utils.date.compare(
               new Date(),
               utils.date.getTomorrow( e.answerDeadline )
-            ) === 1 );
+            ) === 1 ));
   }
 
 

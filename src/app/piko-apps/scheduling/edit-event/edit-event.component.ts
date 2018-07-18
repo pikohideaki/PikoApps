@@ -1,10 +1,11 @@
+
+import {first, switchMap, combineLatest} from 'rxjs/operators';
 import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatStepper, MatDialog } from '@angular/material';
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import 'rxjs/add/operator/combineLatest';
-import 'rxjs/add/operator/skip';
+import { Observable ,  BehaviorSubject } from 'rxjs';
+
+
 
 import { CloudFirestoreMediatorService } from '../../../firebase-mediator/cloud-firestore-mediator.service';
 import { ConfirmDialogComponent } from '../../../my-own-library/confirm-dialog.component';
@@ -24,13 +25,13 @@ export class EditEventComponent implements OnInit {
    */
 
   myEventId$: Observable<string>
-    = this.route.paramMap
-        .switchMap( (params: ParamMap) => params.getAll('eventId') );
+    = this.route.paramMap.pipe(
+        switchMap( (params: ParamMap) => params.getAll('eventId') ));
 
   private myEvent$: Observable<SchedulingEvent>
-    = this.myEventId$.combineLatest(
+    = this.myEventId$.pipe(combineLatest(
         this.database.schedulingEvents$,
-        (id, list) => list.find( e => e.databaseKey === id ) || new SchedulingEvent() );
+        (id, list) => list.find( e => e.databaseKey === id ) || new SchedulingEvent() ));
 
   myEventEditing: SchedulingEvent = new SchedulingEvent();
 
@@ -48,7 +49,7 @@ export class EditEventComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.myEvent$.first().subscribe( myEventInit => {
+    this.myEvent$.pipe(first()).subscribe( myEventInit => {
       console.log(myEventInit);
 
       this.myEventEditing = myEventInit;

@@ -1,8 +1,9 @@
+
+import {takeWhile, map, combineLatest} from 'rxjs/operators';
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import 'rxjs/add/operator/combineLatest';
+import { Observable ,  BehaviorSubject } from 'rxjs';
+
 
 import { utils } from '../../../../my-own-library/utilities';
 import { CloudFirestoreMediatorService } from '../../../../firebase-mediator/cloud-firestore-mediator.service';
@@ -45,19 +46,19 @@ export class AnswerFormComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.allDatesSelected$
-      = this.dateToSymbolId$.map( obj =>
-            Object.keys(obj).every( date => obj[date] !== '' ) );
+      = this.dateToSymbolId$.pipe(map( obj =>
+            Object.keys(obj).every( date => obj[date] !== '' ) ));
 
     const selectedUsersAnswer$: Observable<Answer|undefined>
-      = this.answerId$.combineLatest(
-            this.event$.map( e => e.answers ),
+      = this.answerId$.pipe(combineLatest(
+            this.event$.pipe(map( e => e.answers )),
             (answerId, answers) =>
               ( answers.find( e => e.databaseKey === answerId )
-                  || new Answer() ) );
+                  || new Answer() ) ));
 
     /* subscriptions */
-    this.event$
-      .takeWhile( () => this.alive )
+    this.event$.pipe(
+      takeWhile( () => this.alive ))
       .subscribe( event => {
         /* initialize */
         const obj = this.dateToSymbolIdSource.value;
@@ -65,8 +66,8 @@ export class AnswerFormComponent implements OnInit, OnDestroy {
         this.dateToSymbolIdSource.next( obj );
       });
 
-    selectedUsersAnswer$
-      .takeWhile( () => this.alive )
+    selectedUsersAnswer$.pipe(
+      takeWhile( () => this.alive ))
       .subscribe( answer => {
         this.userName = answer.userName;
         this.comment  = answer.comment;

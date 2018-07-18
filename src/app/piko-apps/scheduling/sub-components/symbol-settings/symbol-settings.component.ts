@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { MySymbol } from '../../scheduling-event';
 
@@ -22,7 +22,6 @@ export class SymbolSettingsComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log( this.symbols );
     // this.defaultSymbols  = this.symbols.filter( e =>  e.id.match(/^(ok|maybe|ng)$/) );
     // this.optionalSymbols = this.symbols.filter( e => !e.id.match(/^(ok|maybe|ng)$/) );
   }

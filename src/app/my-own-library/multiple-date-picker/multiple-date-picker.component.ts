@@ -1,10 +1,11 @@
+
+import {combineLatest as observableCombineLatest,  Observable ,  BehaviorSubject } from 'rxjs';
+
+import {first, startWith, map, takeWhile} from 'rxjs/operators';
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import 'rxjs/add/observable/combineLatest';
-import 'rxjs/add/operator/takeWhile';
-import 'rxjs/add/operator/startWith';
+
+
 
 import { utils } from '../utilities';
 
@@ -32,13 +33,13 @@ export class MultipleDatePickerComponent implements OnInit, OnDestroy {
   currentMonth$: Observable<number> = this.currentMonthSource.asObservable();
 
   private selectedDateValuesSource = new BehaviorSubject<number[]>([]);
-  private selectedDateValues$ = this.selectedDateValuesSource.asObservable().startWith([]);
+  private selectedDateValues$ = this.selectedDateValuesSource.asObservable().pipe(startWith([]));
 
 
 
   constructor(
   ) {
-    this.weeks$ = Observable.combineLatest(
+    this.weeks$ = observableCombineLatest(
         this.currentYear$,
         this.currentMonth$,
         this.selectedDateValues$,
@@ -57,10 +58,10 @@ export class MultipleDatePickerComponent implements OnInit, OnDestroy {
           return weeks;
         } );
 
-    this.selectedDateValues$
-      .map( list => list.map( e => new Date(e) )
-                        .sort( (a, b) => utils.date.compare(a, b) ) )
-      .takeWhile( () => this.alive )
+    this.selectedDateValues$.pipe(
+      map( list => list.map( e => new Date(e) )
+                        .sort( (a, b) => utils.date.compare(a, b) ) ),
+      takeWhile( () => this.alive ),)
       .subscribe( val => this.selectedDatesChange.emit( val ) );
   }
 
@@ -76,7 +77,7 @@ export class MultipleDatePickerComponent implements OnInit, OnDestroy {
     }
 
     if ( !!this.initialDateList$ ) {
-      this.initialDateList$.first().subscribe( initialDateList => {
+      this.initialDateList$.pipe(first()).subscribe( initialDateList => {
         const initialDateValuesUniq
           = utils.array.uniq(
               initialDateList

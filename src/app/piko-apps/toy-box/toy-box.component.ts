@@ -1,5 +1,7 @@
+
+import {map} from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { UserService } from '../../firebase-mediator/user.service';
 
@@ -26,10 +28,10 @@ export class ToyBoxComponent implements OnInit {
   constructor(
     private user: UserService
   ) {
-    this.apps$ = this.user.signedIn$.map( signedIn => [
+    this.apps$ = this.user.signedIn$.pipe(map( signedIn => [
         { routerLink: '/toybox/lambda-interpreter',
           inService: true, title: 'Lambda Calculus Interpreter', subtitle: 'λ計算インタプリタ' },
-      ] );
+      ] ));
   }
 
   ngOnInit() {

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatStepper, MatDialog } from '@angular/material';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/from';
+import { Observable } from 'rxjs';
+
 
 import { CloudFirestoreMediatorService } from '../../firebase-mediator/cloud-firestore-mediator.service';
 import { ConfirmDialogComponent } from '../../my-own-library/confirm-dialog.component';

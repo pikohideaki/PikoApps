@@ -1,5 +1,6 @@
+
+import {takeWhile} from 'rxjs/operators';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
 
 import { CloudFirestoreMediatorService } from '../firebase-mediator/cloud-firestore-mediator.service';
 import { Feedback } from '../classes/feedback';
@@ -51,8 +52,8 @@ export class FeedbackAdminComponent implements OnInit, OnDestroy {
   constructor(
     private database: CloudFirestoreMediatorService
   ) {
-    this.database.feedbacks$
-      .takeWhile( () => this.alive )
+    this.database.feedbacks$.pipe(
+      takeWhile( () => this.alive ) )
       .subscribe( val => this.feedbacks = val );
   }
 

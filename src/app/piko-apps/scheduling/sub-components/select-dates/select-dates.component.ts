@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Observable ,  BehaviorSubject } from 'rxjs';
 
 import { utils } from '../../../../my-own-library/utilities';
 
@@ -16,7 +15,7 @@ import { SetTimeDialogComponent } from './set-time-dialog.component';
 export class SelectDatesComponent implements OnInit, OnDestroy {
   private alive = true;
 
-  @Input() selectedDatetimesInit: Date[] = [];
+  @Input() selectedDatetimes: Date[] = [];
 
   @Output() selectedDatetimesChange = new EventEmitter<Date[]>();
 
@@ -42,7 +41,7 @@ export class SelectDatesComponent implements OnInit, OnDestroy {
    *   [2017/10/29 19:00] ]
    */
 
-  selectedDatetimes: Date[];  /* flattened selectedDates table */
+  // selectedDatetimes: Date[];  /* flattened selectedDates table */
 
 
   constructor(
